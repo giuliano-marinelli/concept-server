@@ -1,0 +1,10 @@
+{
+  "name": "Concept",
+  "description": "Promise to be a, dynamic and interoperable model, modelling tool with abstraction concept mapping over ontological knowledge graph, allowing integration of data sources and top, middle, low and application level ontologies. This is the back-end.",
+  "env": {
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "Leave as 'false' to install required devDependencies.",
+      "value": "false"
+    }
+  }
+}
