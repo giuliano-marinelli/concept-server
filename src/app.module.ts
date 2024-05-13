@@ -80,7 +80,7 @@ import { UsersModule } from './users/users.module';
         }
       },
       {
-        rootPath: join(__dirname, '..', '..', 'app-client', 'dist', 'app-client', 'browser')
+        rootPath: join(__dirname, '..', '..', 'concept-client', 'dist', 'concept-client', 'browser')
       }
     ),
     AuthModule,

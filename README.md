@@ -1,20 +1,20 @@
-# App _2024_
+# Concept
 
 _On this project we had the **backend** code._
 
-It's a [Nest](https://nestjs.com/) project that serves the [app-client](https://github.com/giuliano-marinelli/app-client) via [Express](https://expressjs.com). It uses [GraphQL]() for query the application endpoints, [JWT](https://jwt.io/) for authentication via token, with [device-detector-js](https://github.com/etienne-martin/device-detector-js) for secure sessions, [CASL](https://casl.js.org/) for authorization management, [TypeORM](https://typeorm.io/) for database schema and queries, and [class-validator](https://github.com/typestack/class-validator) for specific attributes validations. By default it's conneted to a [PostgreSQL](https://www.postgresql.org/) datasource, but it can be used with most databases (including [MySQL](https://www.mysql.com/), [MongoDB](https://www.mongodb.com/), [SQLServer](https://www.microsoft.com/es-es/sql-server), [MariaDB](https://mariadb.org/), etc).
+It's a [Nest](https://nestjs.com/) project that serves the [concept-client](https://github.com/giuliano-marinelli/concept-client) via [Express](https://expressjs.com). It uses [GraphQL]() for query the application endpoints, [JWT](https://jwt.io/) for authentication via token, with [device-detector-js](https://github.com/etienne-martin/device-detector-js) for secure sessions, [CASL](https://casl.js.org/) for authorization management, [TypeORM](https://typeorm.io/) for database schema and queries, and [class-validator](https://github.com/typestack/class-validator) for specific attributes validations. By default it's connected to a [PostgreSQL](https://www.postgresql.org/) datasource, but it can be used with most databases (including [MySQL](https://www.mysql.com/), [MongoDB](https://www.mongodb.com/), [SQLServer](https://www.microsoft.com/es-es/sql-server), [MariaDB](https://mariadb.org/), etc).
 
 ## Setup
 
 1. Install [Node.js](https://nodejs.org)
 2. Install the DBMS you want, by default install [PostgreSQL](https://www.postgresql.org/)
 3. From project root folder install all the dependencies: `npm install`
-4. For serve [app-client](https://github.com/giuliano-marinelli/app-client), it must be located at sibling folder of this project, as shown:
+4. For serve [concept-client](https://github.com/giuliano-marinelli/concept-client), it must be located at sibling folder of this project, as shown:
 
 ```
-app
-└─ app-client
-└─ app-server
+concept
+└─ concept-client
+└─ concept-server
    └─ uploads (this is where server saves users uploaded files)
 ```
 
