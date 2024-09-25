@@ -2,33 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-"""
-Where input for boolean type
-"""
+"""Where input for boolean type"""
 input BooleanWhereInput {
-  """
-  List of AND conditions
-  """
+  """List of AND conditions"""
   and: [BooleanWhereInput!]
 
-  """
-  Equal to
-  """
+  """Equal to"""
   eq: Boolean
 
-  """
-  Not equal to
-  """
+  """Not equal to"""
   ne: Boolean
 
-  """
-  Negated condition
-  """
+  """Negated condition"""
   not: BooleanWhereInput
 
-  """
-  List of OR conditions
-  """
+  """List of OR conditions"""
   or: [BooleanWhereInput!]
 }
 
@@ -37,68 +25,42 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-"""
-Where input for date type
-"""
+"""Where input for date type"""
 input DateTimeWhereInput {
-  """
-  List of AND conditions
-  """
+  """List of AND conditions"""
   and: [DateTimeWhereInput!]
 
-  """
-  Equal to anything in the list
-  """
+  """Equal to anything in the list"""
   any: [DateTime!]
 
-  """
-  Value is between two values
-  """
+  """Value is between two values"""
   between: [DateTime!]
 
-  """
-  Equal to
-  """
+  """Equal to"""
   eq: DateTime
 
-  """
-  Greater than
-  """
+  """Greater than"""
   gt: DateTime
 
-  """
-  Greater than or equal to
-  """
+  """Greater than or equal to"""
   gte: DateTime
 
-  """
-  Equal to anything in the list
-  """
+  """Equal to anything in the list"""
   in: [DateTime!]
 
-  """
-  Less than
-  """
+  """Less than"""
   lt: DateTime
 
-  """
-  Less than or equal to
-  """
+  """Less than or equal to"""
   lte: DateTime
 
-  """
-  Not equal to
-  """
+  """Not equal to"""
   ne: DateTime
 
-  """
-  Negated condition
-  """
+  """Negated condition"""
   not: DateTimeWhereInput
 
-  """
-  List of OR conditions
-  """
+  """List of OR conditions"""
   or: [DateTimeWhereInput!]
 }
 
@@ -122,8 +84,7 @@ input DeviceInput {
   type: String
 }
 
-"""
-"""
+""""""
 input DeviceOrderInput {
   bot: OrderDirection
   brand: OrderDirection
@@ -134,8 +95,7 @@ input DeviceOrderInput {
   type: OrderDirection
 }
 
-"""
-"""
+""""""
 input DeviceWhereInput {
   bot: BooleanWhereInput
   brand: StringWhereInput
@@ -180,8 +140,7 @@ input EmailInput {
   verified: Boolean
 }
 
-"""
-"""
+""""""
 input EmailOrderInput {
   address: OrderDirection
   createdAt: OrderDirection
@@ -198,8 +157,7 @@ input EmailRefInput {
   id: UUID!
 }
 
-"""
-"""
+""""""
 input EmailWhereInput {
   address: StringWhereInput
   createdAt: DateTimeWhereInput
@@ -212,8 +170,7 @@ input EmailWhereInput {
   verified: BooleanWhereInput
 }
 
-"""
-"""
+""""""
 type Emails {
   count: Int!
   set: [Email!]
@@ -235,33 +192,21 @@ type Mutation {
   verifyEmail(code: String!, id: UUID!): Email
 }
 
-"""
-Defines the order direction.
-"""
+"""Defines the order direction."""
 enum OrderDirection {
-  """
-  Ascending order.
-  """
+  """Ascending order."""
   ASC
 
-  """
-  Descending order.
-  """
+  """Descending order."""
   DESC
 }
 
-"""
-Pagination generic input
-"""
+"""Pagination generic input"""
 input PaginationInput {
-  """
-  The number of items per page
-  """
+  """The number of items per page"""
   count: Int!
 
-  """
-  The page number
-  """
+  """The page number"""
   page: Int!
 }
 
@@ -283,8 +228,7 @@ input ProfileInput {
   url: String
 }
 
-"""
-"""
+""""""
 input ProfileOrderInput {
   avatar: OrderDirection
   bio: OrderDirection
@@ -294,8 +238,7 @@ input ProfileOrderInput {
   url: OrderDirection
 }
 
-"""
-"""
+""""""
 input ProfileWhereInput {
   avatar: StringWhereInput
   bio: StringWhereInput
@@ -313,14 +256,10 @@ type Query {
   email(id: UUID!): Email
   emails(order: [EmailOrderInput!], pagination: PaginationInput, where: [EmailWhereInput!]): Emails!
 
-  """
-  Login with username or email and password. Returns the token string.
-  """
+  """Login with username or email and password. Returns the token string."""
   login(password: String!, usernameOrEmail: String!): String!
 
-  """
-  Logout the current user. Close current session of device.
-  """
+  """Logout the current user. Close current session of device."""
   logout: Boolean!
   session(id: UUID!): Session
   sessions(order: [SessionOrderInput!], pagination: PaginationInput, where: [SessionWhereInput!]): Sessions!
@@ -328,18 +267,12 @@ type Query {
   users(order: [UserOrderInput!], pagination: PaginationInput, where: [UserWhereInput!]): Users!
 }
 
-"""
-Defines wich permissions user has.
-"""
+"""Defines wich permissions user has."""
 enum Role {
-  """
-  Admin role can access to all application features.
-  """
+  """Admin role can access to all application features."""
   ADMIN
 
-  """
-  User role can access to application basic features.
-  """
+  """User role can access to application basic features."""
   USER
 }
 
@@ -361,14 +294,13 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2024-05-02T23:10:16.313Z"
+  lastActivity: DateTime! = "2024-09-25T16:54:33.563Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput
 }
 
-"""
-"""
+""""""
 input SessionOrderInput {
   blockedAt: OrderDirection
   closedAt: OrderDirection
@@ -381,8 +313,7 @@ input SessionOrderInput {
   user: UserOrderInput
 }
 
-"""
-"""
+""""""
 input SessionWhereInput {
   blockedAt: DateTimeWhereInput
   closedAt: DateTimeWhereInput
@@ -395,60 +326,39 @@ input SessionWhereInput {
   user: UserWhereInput
 }
 
-"""
-"""
+""""""
 type Sessions {
   count: Int!
   set: [Session!]
 }
 
-"""
-Where input for string type
-"""
+"""Where input for string type"""
 input StringWhereInput {
-  """
-  List of AND conditions
-  """
+  """List of AND conditions"""
   and: [StringWhereInput!]
 
-  """
-  Equal to anything in the list
-  """
+  """Equal to anything in the list"""
   any: [String!]
 
-  """
-  Equal to
-  """
+  """Equal to"""
   eq: String
 
-  """
-  Case-sensitive pattern matching expression
-  """
+  """Case-sensitive pattern matching expression"""
   ilike: String
 
-  """
-  Equal to anything in the list
-  """
+  """Equal to anything in the list"""
   in: [String!]
 
-  """
-  Pattern matching expression
-  """
+  """Pattern matching expression"""
   like: String
 
-  """
-  Not equal to
-  """
+  """Not equal to"""
   ne: String
 
-  """
-  Negated condition
-  """
+  """Negated condition"""
   not: StringWhereInput
 
-  """
-  List of OR conditions
-  """
+  """List of OR conditions"""
   or: [StringWhereInput!]
 }
 
@@ -457,9 +367,7 @@ A field whose value is a generic Universally Unique Identifier: https://en.wikip
 """
 scalar UUID
 
-"""
-The `Upload` scalar type represents a file upload.
-"""
+"""The `Upload` scalar type represents a file upload."""
 scalar Upload
 
 type User {
@@ -504,8 +412,7 @@ input UserInput {
   verificationCode: String
 }
 
-"""
-"""
+""""""
 input UserOrderInput {
   createdAt: OrderDirection
   deletedAt: OrderDirection
@@ -533,8 +440,7 @@ input UserUpdateInput {
   username: String
 }
 
-"""
-"""
+""""""
 input UserWhereInput {
   createdAt: DateTimeWhereInput
   deletedAt: DateTimeWhereInput
@@ -551,8 +457,7 @@ input UserWhereInput {
   verificationCode: StringWhereInput
 }
 
-"""
-"""
+""""""
 type Users {
   count: Int!
   set: [User!]

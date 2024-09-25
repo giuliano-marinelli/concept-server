@@ -17,6 +17,8 @@ import { join } from 'path';
 import { CaslFactory } from './casl/casl.factory';
 import { GraphQLThrottlerGuard } from './throttler/throttler.guard';
 
+import { GLSPService } from './glsp/glsp.service';
+
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
 import { EmailsModule } from './emails/emails.module';
@@ -94,7 +96,8 @@ import { UsersModule } from './users/users.module';
     {
       provide: APP_GUARD,
       useClass: GraphQLThrottlerGuard
-    }
+    },
+    GLSPService
   ]
 })
 export class AppModule {}

@@ -1,0 +1,113 @@
+erdiagram Concept
+
+notation=uml
+
+// Users manangement
+entity User {
+    id key
+    username
+    password
+    role
+    verificationCode
+    lastVerificationTry
+    passwordCode
+}
+relationship hasProfile {
+   User[1] -> Profile[1]
+}
+entity Profile {
+    id key
+    avatar
+    name
+    bio
+    location
+    url
+}
+relationship primaryEmail {
+   User[1] -> Email[1]
+}
+relationship hasEmails {
+   User[1] -> Email[N]
+}
+relationship publicEmail {
+   Profile[1] -> Email[1]
+}
+entity Email {
+    id key
+    address
+    verified
+    verificationCode
+    lastVerificationTry
+}
+relationship hasSessions {
+   User[1] -> Session[N]
+}
+entity Session {
+    id key
+    token
+    lastActivity
+    blockedAt
+    closedAt
+}
+relationship hasDevice {
+   Session[1] -> Device[1]
+}
+entity Device {
+    id key
+    client
+    os
+    brand
+    model
+    type
+    bot
+    ip
+}
+
+// Metamodel management
+relationship create {
+   User[1] -> MetaModel[N]
+}
+entity MetaModel {
+    id key
+    version key
+    name
+    description
+    logo
+}
+relationship hasElements {
+   MetaModel[1] -> MetaElement[N]
+}
+entity MetaElement {
+    id key
+    name
+    description
+}
+relationship hasConnections {
+   MetaModel[1] -> MetaConnection[N]
+}
+relationship referenceTypes {
+    MetaConnection[1] -> MetaElement[N]
+}
+entity MetaConnection {
+    id key
+    name
+    description
+}
+relationship hasReferences {
+    Reference[1] -> MetaElement[1]
+}
+relationship isReferenced {
+    Reference[1] -> MetaConnection[1]
+}
+entity Reference {
+    id key
+    lowerBound
+    upperBound
+}
+relationship hasConfig {
+   MetaModel[1] -> MetaEditor[1]
+}
+entity MetaEditor {
+    id key
+}
+
