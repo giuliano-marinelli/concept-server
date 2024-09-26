@@ -1,4 +1,5 @@
 import {
+  Args,
   Command,
   CreateNodeOperation,
   DefaultTypes,
@@ -6,19 +7,20 @@ import {
   GhostElement,
   JsonCreateNodeOperationHandler,
   MaybePromise,
-  Point
+  Point,
+  TriggerNodeCreationAction
 } from '@eclipse-glsp/server';
 
 import { DynamicGModelFactory } from '../../model/dynamic-gmodel-factory';
 import { Node } from '../../model/dynamic-model';
 import { DynamicModelState } from '../../model/dynamic-model-state';
 import { inject, injectable } from 'inversify';
+import { DynamicLanguageSpecification } from 'src/dynamic-glsp/model/dynamic-language-specification';
 import * as uuid from 'uuid';
 
 @injectable()
 export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHandler {
   elementTypeIds = [DefaultTypes.NODE];
-  //   nodeName: string = 'Node';
 
   @inject(DynamicModelState)
   protected override modelState: DynamicModelState;
@@ -29,32 +31,52 @@ export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHa
   @inject(DynamicGModelFactory)
   protected modelFactory: DynamicGModelFactory;
 
-  //   constructor(nodeName: string) {
-  //     super();
-  //     this.nodeName = nodeName;
-  //   }
+  @inject(DynamicLanguageSpecification)
+  protected languageSpecification: DynamicLanguageSpecification;
 
   override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
     return this.commandOf(() => {
       const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-      const node = this.createNode(relativeLocation);
+      const node = this.createNode((operation.args?.type as string) ?? DefaultTypes.NODE, relativeLocation);
       const dynamicModel = this.modelState.sourceModel;
       dynamicModel.nodes.push(node);
     });
   }
 
-  protected createNode(position?: Point): Node {
+  protected createNode(nodeType: string, position?: Point): Node {
     // const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
+    const nodeSpec = nodeType
+      ? this.languageSpecification.language.nodes.find((node) => node.type === nodeType)
+      : undefined;
     return {
-      type: 'node',
       id: uuid.v4(),
-      name: 'Node',
+      type: nodeType,
+      name: nodeSpec?.label ?? 'Node',
       position: position ?? Point.ORIGIN
     };
   }
 
+  override getTriggerActions(): TriggerNodeCreationAction[] {
+    this.elementTypeIds = this.languageSpecification.language.nodes.map((node) => node.type);
+    return this.elementTypeIds.map((elementTypeId) => this.createTriggerNodeCreationAction(elementTypeId));
+  }
+
+  protected override createTriggerNodeCreationAction(elementTypeId: string): TriggerNodeCreationAction {
+    return TriggerNodeCreationAction.create(DefaultTypes.NODE, {
+      ghostElement: this.createTriggerGhostElement(elementTypeId),
+      args: this.createTriggerArgs(elementTypeId)
+    });
+  }
+
+  protected override createTriggerArgs(elementTypeId: string): Args | undefined {
+    return this.languageSpecification?.language?.nodes?.find((node) => node.type === elementTypeId) ?? undefined;
+  }
+
   protected override createTriggerGhostElement(elementTypeId: string): GhostElement | undefined {
-    return { template: this.serializer.createSchema(this.modelFactory.createNode(this.createNode())), dynamic: true };
+    return {
+      template: this.serializer.createSchema(this.modelFactory.createNode(this.createNode(elementTypeId))),
+      dynamic: true
+    };
   }
 
   get label(): string {

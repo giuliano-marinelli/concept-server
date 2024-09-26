@@ -1,6 +1,7 @@
 import { Command, JsonOperationHandler, MaybePromise, PasteOperation, Point } from '@eclipse-glsp/server';
 
 import { inject, injectable } from 'inversify';
+import { Edge, Node } from 'src/dynamic-glsp/model/dynamic-model';
 import { DynamicModelState } from 'src/dynamic-glsp/model/dynamic-model-state';
 import * as uuid from 'uuid';
 
@@ -26,7 +27,7 @@ export class DynamicPasteOperationHandler extends JsonOperationHandler {
 
           // add each node to the model with a new id, update edges, and remove the node from the elements array
           for (let i = elements.length - 1; i >= 0; i--) {
-            if (elements[i].type === 'node') {
+            if (Node.is(elements[i])) {
               // preserve previous id of the pasted node
               const prevId = elements[i].id;
 
@@ -45,7 +46,7 @@ export class DynamicPasteOperationHandler extends JsonOperationHandler {
 
               // update edges sourceId and targetId if they are connected to the pasted node
               for (let j = 0; j < elements.length; j++) {
-                if (elements[j].type === 'edge') {
+                if (Edge.is(elements[j])) {
                   if (elements[j].sourceId === prevId) elements[j].sourceId = elements[i].id;
                   if (elements[j].targetId === prevId) elements[j].targetId = elements[i].id;
                 }
@@ -61,7 +62,7 @@ export class DynamicPasteOperationHandler extends JsonOperationHandler {
 
           // add the remaining edges to the model with a new id
           elements.forEach((element) => {
-            if (element.type === 'edge') {
+            if (Edge.is(element)) {
               // update id of the pasted edge
               element.id = uuid.v4();
 
@@ -94,7 +95,7 @@ export class DynamicPasteOperationHandler extends JsonOperationHandler {
     let minPoint = { x: Number.MAX_VALUE, y: Number.MAX_VALUE };
     let maxPoint = { x: Number.MIN_VALUE, y: Number.MIN_VALUE };
     elements.forEach((element) => {
-      if (element.type === 'node') {
+      if (Node.is(element)) {
         const position = element.position ?? Point.ORIGIN;
         minPoint = { x: Math.min(minPoint.x, position.x), y: Math.min(minPoint.y, position.y) };
         maxPoint = { x: Math.max(maxPoint.x, position.x), y: Math.max(maxPoint.y, position.y) };

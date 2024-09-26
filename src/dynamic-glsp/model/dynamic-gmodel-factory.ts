@@ -1,7 +1,8 @@
-import { ArgsUtil, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
+import { ArgsUtil, DefaultTypes, GEdge, GGraph, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 
 import { inject, injectable } from 'inversify';
 
+import { DynamicLanguageSpecification } from './dynamic-language-specification';
 import { Edge, Node } from './dynamic-model';
 import { DynamicModelState } from './dynamic-model-state';
 
@@ -9,6 +10,9 @@ import { DynamicModelState } from './dynamic-model-state';
 export class DynamicGModelFactory implements GModelFactory {
   @inject(DynamicModelState)
   protected modelState: DynamicModelState;
+
+  @inject(DynamicLanguageSpecification)
+  protected languageSpecification: DynamicLanguageSpecification;
 
   createModel(): void {
     const dynamicModel = this.modelState.sourceModel;
@@ -23,17 +27,22 @@ export class DynamicGModelFactory implements GModelFactory {
   }
 
   createNode(node: Node): GNode {
+    const nodeSpec = node.type
+      ? this.languageSpecification?.language?.nodes?.find((langNode) => langNode.type === node.type)
+      : undefined;
     const builder = GNode.builder() //
+      .type(nodeSpec?.gModel?.type ?? DefaultTypes.NODE)
       .id(node.id)
       .addCssClass('node')
       .addArgs(ArgsUtil.cornerRadius(5))
-      .layout('vbox')
+      .layout(nodeSpec?.gModel?.layout ?? 'hbox')
       .add(
         GLabel.builder() //
           .text(node.name)
           .id(`${node.id}_label`)
           .build()
       )
+      .size(node.size?.width ?? 50, node.size?.height ?? 25)
       .position(node.position);
 
     if (node.size) {
@@ -44,6 +53,9 @@ export class DynamicGModelFactory implements GModelFactory {
   }
 
   createEdge(edge: Edge): GEdge {
+    const edgeSpec = edge.type
+      ? this.languageSpecification?.language?.edges?.find((langEdge) => langEdge.type === edge.type)
+      : undefined;
     return GEdge.builder() //
       .id(edge.id)
       .addCssClass('edge')

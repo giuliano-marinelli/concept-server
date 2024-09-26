@@ -17,7 +17,7 @@ export namespace DynamicModel {
 }
 
 export interface Node {
-  type: 'node';
+  type: string;
   id: string;
   name: string;
   position: { x: number; y: number };
@@ -36,7 +36,7 @@ export namespace Node {
 }
 
 export interface Edge {
-  type: 'edge';
+  type: string;
   id: string;
   name: string;
   sourceId: string;

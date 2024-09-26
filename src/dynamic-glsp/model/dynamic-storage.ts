@@ -32,13 +32,13 @@ export class DynamicStorage extends AbstractJsonModelStorage {
       id: uuid.v4(),
       nodes: [
         {
-          type: 'node',
+          type: 'entity',
           id: personId,
           name: 'Person',
           position: { x: 100, y: 100 }
         },
         {
-          type: 'node',
+          type: 'relationship',
           id: studentId,
           name: 'Student',
           position: { x: 200, y: 100 }
@@ -46,7 +46,7 @@ export class DynamicStorage extends AbstractJsonModelStorage {
       ],
       edges: [
         {
-          type: 'edge',
+          type: 'connector',
           id: uuid.v4(),
           name: 'is a',
           sourceId: personId,

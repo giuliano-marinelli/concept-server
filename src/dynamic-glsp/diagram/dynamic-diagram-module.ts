@@ -1,7 +1,6 @@
 import {
   ActionHandlerConstructor,
   BindingTarget,
-  CommandPaletteActionProvider,
   ComputedBoundsActionHandler,
   DiagramConfiguration,
   DiagramModule,
@@ -11,7 +10,9 @@ import {
   LabelEditValidator,
   ModelState,
   OperationHandlerConstructor,
-  SourceModelStorage
+  SourceModelStorage,
+  ToolPaletteItemProvider,
+  applyBindingTarget
 } from '@eclipse-glsp/server';
 
 import { DynamicRequestClipboardDataActionHandler } from '../handler/action/dynamic-request-clipboard-data-action-handler';
@@ -26,16 +27,38 @@ import { DynamicPasteOperationHandler } from '../handler/operation/dynamic-paste
 import { DynamicReconnectEdgeOperationHandler } from '../handler/operation/dynamic-reconnect-edge-operation-handler';
 import { DynamicLabelEditValidator } from '../handler/validator/dynamic-label-edit-validator';
 import { DynamicGModelFactory } from '../model/dynamic-gmodel-factory';
+import { DynamicLanguageSpecification, LanguageSpecification } from '../model/dynamic-language-specification';
 import { DynamicModelIndex } from '../model/dynamic-model-index';
 import { DynamicModelState } from '../model/dynamic-model-state';
 import { DynamicStorage } from '../model/dynamic-storage';
-import { injectable } from 'inversify';
+import { DynamicToolPaletteItemProvider } from '../provider/dynamic-tool-palette-item-provider';
+import { injectable, interfaces } from 'inversify';
 
 import { DynamicDiagramConfiguration } from './dynamic-diagram-configuration';
 
 @injectable()
 export class DynamicDiagramModule extends DiagramModule {
   readonly diagramType = 'dynamic';
+
+  // redefine the configure method to bind the dynamic language specification
+  protected configure(
+    bind: interfaces.Bind,
+    unbind: interfaces.Unbind,
+    isBound: interfaces.IsBound,
+    rebind: interfaces.Rebind
+  ): void {
+    const context = { bind, isBound };
+
+    // bind the injectable for dynamic language specification (it will have the dynamic language specification)
+    applyBindingTarget(context, LanguageSpecification, this.bindLanguageSpecification()).inSingletonScope();
+
+    // call the base class configure method
+    super.configure(bind, unbind, isBound, rebind);
+  }
+
+  protected bindLanguageSpecification(): BindingTarget<LanguageSpecification> {
+    return { service: DynamicLanguageSpecification };
+  }
 
   /**
    * Bind the diagram configuration which is used to define the diagram elements behaviour and restrictions.
@@ -59,6 +82,10 @@ export class DynamicDiagramModule extends DiagramModule {
   protected override bindGModelIndex(): BindingTarget<GModelIndex> {
     this.context.bind(DynamicModelIndex).toSelf().inSingletonScope();
     return { service: DynamicModelIndex };
+  }
+
+  protected override bindToolPaletteItemProvider(): BindingTarget<ToolPaletteItemProvider> | undefined {
+    return DynamicToolPaletteItemProvider;
   }
 
   protected override bindLabelEditValidator(): BindingTarget<LabelEditValidator> | undefined {
