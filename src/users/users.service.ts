@@ -247,7 +247,7 @@ export class UsersService {
     return count > 0;
   }
 
-  async findOne(id: string, selection: SelectionInput) {
+  async findOne(id: string, selection?: SelectionInput) {
     return await this.usersRepository.findOne({
       relations: selection?.getRelations(),
       where: { id: id }

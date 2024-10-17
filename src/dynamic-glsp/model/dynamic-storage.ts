@@ -3,6 +3,7 @@ import { AbstractJsonModelStorage, MaybePromise, RequestModelAction, SaveModelAc
 import { inject, injectable } from 'inversify';
 import * as uuid from 'uuid';
 
+import { DynamicLanguageSpecification } from './dynamic-language-specification';
 import { DynamicModel } from './dynamic-model';
 import { DynamicModelState } from './dynamic-model-state';
 
@@ -12,6 +13,7 @@ export class DynamicStorage extends AbstractJsonModelStorage {
   protected override modelState: DynamicModelState;
 
   loadSourceModel(action: RequestModelAction): MaybePromise<void> {
+    console.log('loadSourceModel');
     // const sourceUri = this.getSourceUri(action);
     // const dynamicModel = this.loadFromFile(sourceUri, DynamicModel.is);
     // this.modelState.updateSourceModel(dynamicModel);
@@ -20,8 +22,9 @@ export class DynamicStorage extends AbstractJsonModelStorage {
   }
 
   saveSourceModel(action: SaveModelAction): MaybePromise<void> {
-    const sourceUri = this.getFileUri(action);
-    this.writeFile(sourceUri, this.modelState.sourceModel);
+    console.log('saveSourceModel');
+    // const sourceUri = this.getFileUri(action);
+    // this.writeFile(sourceUri, this.modelState.sourceModel);
   }
 
   protected override createModelForEmptyFile(): DynamicModel {

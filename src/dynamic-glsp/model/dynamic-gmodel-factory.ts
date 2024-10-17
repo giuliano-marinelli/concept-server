@@ -16,7 +16,7 @@ export class DynamicGModelFactory implements GModelFactory {
 
   createModel(): void {
     const dynamicModel = this.modelState.sourceModel;
-    this.modelState.index.indexDynamicModel(dynamicModel);
+    this.modelState.index.indexModel(dynamicModel);
 
     const childNodes = dynamicModel.nodes.map((node) => this.createNode(node));
     const childEdges = dynamicModel.edges.map((edge) => this.createEdge(edge));

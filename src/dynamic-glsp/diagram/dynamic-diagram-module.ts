@@ -15,6 +15,7 @@ import {
   applyBindingTarget
 } from '@eclipse-glsp/server';
 
+import { DynamicLoadLanguageSpecificationActionHandler } from '../handler/action/dynamic-load-language-specification-action-handler';
 import { DynamicRequestClipboardDataActionHandler } from '../handler/action/dynamic-request-clipboard-data-action-handler';
 import { DynamicApplyLabelEditOperationHandler } from '../handler/operation/dynamic-apply-label-edit-operation-handler';
 import { DynamicChangeBoundsOperationHandler } from '../handler/operation/dynamic-change-bounds-operation-handler';
@@ -35,10 +36,18 @@ import { DynamicToolPaletteItemProvider } from '../provider/dynamic-tool-palette
 import { injectable, interfaces } from 'inversify';
 
 import { DynamicDiagramConfiguration } from './dynamic-diagram-configuration';
+import { ExternalServices } from './dynamic-external-services';
 
 @injectable()
 export class DynamicDiagramModule extends DiagramModule {
   readonly diagramType = 'dynamic';
+  readonly services: ExternalServices;
+
+  constructor(services?: ExternalServices) {
+    console.log('DiagramModule created');
+    super();
+    this.services = services;
+  }
 
   // redefine the configure method to bind the dynamic language specification
   protected configure(
@@ -49,7 +58,11 @@ export class DynamicDiagramModule extends DiagramModule {
   ): void {
     const context = { bind, isBound };
 
-    // bind the injectable for dynamic language specification (it will have the dynamic language specification)
+    // bind the injectable external services (it can provide access to services outside GLSP)
+    // must be used as a injectable in the constructor of other classes
+    bind(ExternalServices).toConstantValue(this.services);
+
+    // bind the injectable for dynamic language specification
     applyBindingTarget(context, LanguageSpecification, this.bindLanguageSpecification()).inSingletonScope();
 
     // call the base class configure method
@@ -100,6 +113,7 @@ export class DynamicDiagramModule extends DiagramModule {
     super.configureActionHandlers(binding);
     binding.add(ComputedBoundsActionHandler);
     binding.add(DynamicRequestClipboardDataActionHandler);
+    binding.add(DynamicLoadLanguageSpecificationActionHandler);
   }
 
   protected override configureOperationHandlers(binding: InstanceMultiBinding<OperationHandlerConstructor>): void {

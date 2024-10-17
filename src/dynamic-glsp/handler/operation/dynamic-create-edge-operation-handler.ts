@@ -28,7 +28,7 @@ export class DynamicCreateEdgeOperationHandler extends JsonCreateEdgeOperationHa
     return this.commandOf(() => {
       const edgeType = operation.args?.type as string;
       const edgeSpec = edgeType
-        ? this.languageSpecification.language.edges.find((edge) => edge.type === edgeType)
+        ? this.languageSpecification.language?.edges?.find((edge) => edge.type === edgeType)
         : undefined;
       const edge: Edge = {
         id: uuid.v4(),
@@ -42,7 +42,7 @@ export class DynamicCreateEdgeOperationHandler extends JsonCreateEdgeOperationHa
   }
 
   override getTriggerActions(): TriggerEdgeCreationAction[] {
-    this.elementTypeIds = this.languageSpecification.language.edges.map((edge) => edge.type);
+    this.elementTypeIds = this.languageSpecification.language?.edges?.map((edge) => edge.type) ?? this.elementTypeIds;
     return this.elementTypeIds.map((elementTypeId) =>
       TriggerEdgeCreationAction.create(DefaultTypes.EDGE, { args: this.createTriggerArgs(elementTypeId) })
     );

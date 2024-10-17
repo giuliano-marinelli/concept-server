@@ -10,14 +10,14 @@ export class DynamicModelState extends DefaultModelState implements JsonModelSta
   @inject(DynamicModelIndex)
   override readonly index: DynamicModelIndex;
 
-  protected _dynamicModel: DynamicModel;
+  protected _model: DynamicModel;
 
   get sourceModel(): DynamicModel {
-    return this._dynamicModel;
+    return this._model;
   }
 
-  updateSourceModel(dynamicModel: DynamicModel): void {
-    this._dynamicModel = dynamicModel;
-    this.index.indexDynamicModel(dynamicModel);
+  updateSourceModel(model: DynamicModel): void {
+    this._model = model;
+    this.index.indexModel(model);
   }
 }

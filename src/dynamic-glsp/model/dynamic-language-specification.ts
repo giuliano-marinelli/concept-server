@@ -1,6 +1,7 @@
 import { DefaultTypes } from '@eclipse-glsp/server';
 
-import { injectable } from 'inversify';
+import { ExternalServices } from '../diagram/dynamic-external-services';
+import { inject, injectable } from 'inversify';
 
 export const LanguageSpecification = Symbol('LanguageSpecification');
 
@@ -16,15 +17,23 @@ export class DynamicLanguageSpecification implements LanguageSpecification {
     edges: { type: string; label: string; gModel?: any }[];
   };
 
-  constructor() {
-    this.load();
+  protected services;
+
+  constructor(@inject(ExternalServices) services: ExternalServices) {
+    this.services = services;
   }
 
   async load() {
+    console.log('DynamicLanguageSpecification loaded');
+
+    // console.log(this.services);
+    // console.log('random user', await this.services.usersService?.findOne('6b060ffd-b6e9-47d7-8108-9c85e6335f78'));
+
     this.language = {
       nodes: [
         { type: 'entity', label: 'Entity', gModel: { type: DefaultTypes.NODE, layout: 'vbox' } },
-        { type: 'relationship', label: 'Relationship', gModel: { type: DefaultTypes.NODE_DIAMOND, layout: 'hbox' } }
+        { type: 'relationship', label: 'Relationship', gModel: { type: DefaultTypes.NODE_DIAMOND, layout: 'hbox' } },
+        { type: 'other', label: 'Other' }
       ],
       edges: [{ type: 'connector', label: 'Connector' }]
     };

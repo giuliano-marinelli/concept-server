@@ -6,12 +6,12 @@ import { DynamicModel, Edge, Node } from './dynamic-model';
 
 @injectable()
 export class DynamicModelIndex extends GModelIndex {
-  protected idToDynamicModelElement = new Map<string, Node | Edge>();
+  protected idToModelElement = new Map<string, Node | Edge>();
 
-  indexDynamicModel(dynamicModel: DynamicModel): void {
-    this.idToDynamicModelElement.clear();
-    for (const element of [...dynamicModel.nodes, ...dynamicModel.edges]) {
-      this.idToDynamicModelElement.set(element.id, element);
+  indexModel(model: DynamicModel): void {
+    this.idToModelElement.clear();
+    for (const element of [...model.nodes, ...model.edges]) {
+      this.idToModelElement.set(element.id, element);
     }
   }
 
@@ -26,6 +26,6 @@ export class DynamicModelIndex extends GModelIndex {
   }
 
   findNodeOrEdge(id: string): Node | Edge | undefined {
-    return this.idToDynamicModelElement.get(id);
+    return this.idToModelElement.get(id);
   }
 }

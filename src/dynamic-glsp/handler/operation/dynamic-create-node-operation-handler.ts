@@ -46,7 +46,7 @@ export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHa
   protected createNode(nodeType: string, position?: Point): Node {
     // const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
     const nodeSpec = nodeType
-      ? this.languageSpecification.language.nodes.find((node) => node.type === nodeType)
+      ? this.languageSpecification.language?.nodes?.find((node) => node.type === nodeType)
       : undefined;
     return {
       id: uuid.v4(),
@@ -57,7 +57,7 @@ export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHa
   }
 
   override getTriggerActions(): TriggerNodeCreationAction[] {
-    this.elementTypeIds = this.languageSpecification.language.nodes.map((node) => node.type);
+    this.elementTypeIds = this.languageSpecification.language?.nodes?.map((node) => node.type) ?? this.elementTypeIds;
     return this.elementTypeIds.map((elementTypeId) => this.createTriggerNodeCreationAction(elementTypeId));
   }
 
