@@ -1,13 +1,16 @@
-import { DefaultTypes } from '@eclipse-glsp/server';
+import { DefaultTypes, GLSPServerError } from '@eclipse-glsp/server';
 
 import { ExternalServices } from '../diagram/dynamic-external-services';
+import { LoadLanguageSpecificationAction } from '../handler/action/dynamic-load-language-specification-action-handler';
+import { AuthClientAction } from '../server/dynamic-auth-client-action';
+import { MessageConnectionAuth } from '../server/dynamic-websocket-server-launcher';
 import { inject, injectable } from 'inversify';
 
 export const LanguageSpecification = Symbol('LanguageSpecification');
 
 export interface LanguageSpecification {
   language: any;
-  load(): void;
+  load(action: LoadLanguageSpecificationAction & AuthClientAction): void;
 }
 
 @injectable()
@@ -17,17 +20,20 @@ export class DynamicLanguageSpecification implements LanguageSpecification {
     edges: { type: string; label: string; gModel?: any }[];
   };
 
-  protected services;
+  @inject(ExternalServices)
+  protected services: ExternalServices;
 
-  constructor(@inject(ExternalServices) services: ExternalServices) {
-    this.services = services;
-  }
+  async load(action: LoadLanguageSpecificationAction & AuthClientAction) {
+    const { languageID, connectionAuth } = action;
 
-  async load() {
-    console.log('DynamicLanguageSpecification loaded');
+    if (!this.services.languageProvider) {
+      throw new GLSPServerError('No language provider was defined');
+    }
 
-    // console.log(this.services);
-    // console.log('random user', await this.services.usersService?.findOne('6b060ffd-b6e9-47d7-8108-9c85e6335f78'));
+    // use the language provider to get the language specification
+    const language = await this.services.languageProvider(languageID, connectionAuth);
+
+    console.log(language);
 
     this.language = {
       nodes: [

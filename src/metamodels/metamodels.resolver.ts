@@ -43,13 +43,14 @@ export class MetamodelsResolver {
   async create(
     @Args('metamodelCreateInput') metamodelCreateInput: MetamodelCreateInput,
     @Args('logoFile', { type: () => GraphQLUpload, nullable: true }, UploadTransform) logo: string,
-    @SelectionSet() selection: SelectionInput
+    @SelectionSet() selection: SelectionInput,
+    @AuthUser() authUser: User
   ) {
     if (logo) {
       metamodelCreateInput.logo = logo;
     }
     console.log('metamodelCreateInput', metamodelCreateInput);
-    return await this.metamodelsService.create(metamodelCreateInput, selection);
+    return await this.metamodelsService.create(metamodelCreateInput, selection, authUser);
   }
 
   @CheckPolicies((args) => ({
@@ -99,8 +100,12 @@ export class MetamodelsResolver {
     subject: Metamodel.name
   }))
   @Query(() => Metamodel, { name: 'metamodel', nullable: true })
-  async findOne(@Args('id', { type: () => GraphQLUUID }) id: string, @SelectionSet() selection: SelectionInput) {
-    return await this.metamodelsService.findOne(id, selection);
+  async findOne(
+    @Args('id', { type: () => GraphQLUUID }) id: string,
+    @SelectionSet() selection: SelectionInput,
+    @AuthUser() authUser: User
+  ) {
+    return await this.metamodelsService.findOne(id, selection, authUser);
   }
 
   @Public()

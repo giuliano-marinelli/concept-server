@@ -29,6 +29,7 @@ import {
 
 import { Profile, ProfileOrderInput, ProfileWhereInput } from './profile.entity';
 import { Email, EmailOrderInput, EmailWhereInput } from 'src/emails/entities/email.entity';
+import { Metamodel, MetamodelOrderInput, MetamodelWhereInput } from 'src/metamodels/entities/metamodel.entity';
 import { Session, SessionOrderInput, SessionWhereInput } from 'src/sessions/entities/session.entity';
 
 export enum Role {
@@ -129,6 +130,12 @@ export class User {
   @OneToMany(() => Session, (session) => session.user, { cascade: true })
   @Extensions({ owner: 'id' })
   sessions: Session[];
+
+  @Field(() => [Metamodel], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => MetamodelWhereInput, () => MetamodelOrderInput)
+  @OneToMany(() => Metamodel, (metamodel) => metamodel.owner)
+  @Extensions({ owner: 'id' })
+  metamodels: Metamodel[];
 }
 
 @InputType()

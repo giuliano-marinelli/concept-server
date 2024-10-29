@@ -2,6 +2,7 @@ import { Action, ActionHandler, Args, RequestAction, ResponseAction, hasObjectPr
 
 import { inject, injectable } from 'inversify';
 import { DynamicLanguageSpecification } from 'src/dynamic-glsp/model/dynamic-language-specification';
+import { AuthClientAction } from 'src/dynamic-glsp/server/dynamic-auth-client-action';
 
 /*
  This RequestAction and ResponseActions interfaces must be in a shared project to be used in both the client and server.
@@ -59,7 +60,7 @@ export class DynamicLoadLanguageSpecificationActionHandler implements ActionHand
   protected languageSpecification: DynamicLanguageSpecification;
 
   async execute(action: LoadLanguageSpecificationAction): Promise<Action[]> {
-    await this.languageSpecification.load();
+    await this.languageSpecification.load(action as LoadLanguageSpecificationAction & AuthClientAction);
 
     return [ReadyLanguageSpecificationAction.create()];
   }

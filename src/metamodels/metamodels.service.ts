@@ -1,12 +1,12 @@
 import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PaginationInput, SelectionInput } from '@nestjs!/graphql-filter';
+import { Owner, PaginationInput, SelectionInput } from '@nestjs!/graphql-filter';
 
-import { Equal, FindOptionsOrder, FindOptionsWhere, Not, Repository } from 'typeorm';
+import { Equal, FindOptionsOrder, FindOptionsRelations, FindOptionsWhere, Not, Repository } from 'typeorm';
 
-import { Metamodel, MetamodelCreateInput, MetamodelUpdateInput, Role } from './entities/metamodel.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Metamodel, MetamodelCreateInput, MetamodelUpdateInput } from './entities/metamodel.entity';
+import { Role, User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class MetamodelsService {
@@ -15,7 +15,11 @@ export class MetamodelsService {
     private metamodelsRepository: Repository<Metamodel>
   ) {}
 
-  async create(metamodelCreateInput: MetamodelCreateInput, selection: SelectionInput) {
+  async create(metamodelCreateInput: MetamodelCreateInput, selection: SelectionInput, authUser: User) {
+    // only admin can create metamodels on other users
+    if (metamodelCreateInput.owner.id != authUser.id && authUser.role != Role.ADMIN)
+      throw new ForbiddenException('Cannot create metamodels on users other than yourself.');
+
     // check if tagname already taken
     const existentTagname = await this.metamodelsRepository.findOne({
       where: { tagname: metamodelCreateInput.tagname }
@@ -24,7 +28,9 @@ export class MetamodelsService {
 
     // insert metamodel
     const insert = await this.metamodelsRepository.insert({
-      ...metamodelCreateInput
+      ...metamodelCreateInput,
+      owner: { id: metamodelCreateInput.owner.id },
+      version: '1.0.0'
     });
 
     return await this.metamodelsRepository.findOne({
@@ -83,10 +89,11 @@ export class MetamodelsService {
     return count > 0;
   }
 
-  async findOne(id: string, selection?: SelectionInput) {
+  async findOne(id: string, selection: SelectionInput | FindOptionsRelations<Metamodel>, authUser: User) {
     return await this.metamodelsRepository.findOne({
-      relations: selection?.getRelations(),
-      where: { id: id }
+      relations:
+        typeof selection['getRelations'] === 'function' ? (selection as SelectionInput).getRelations() : selection,
+      where: Owner({ id: id }, 'owner.id', authUser, [Role.ADMIN])
     });
   }
 

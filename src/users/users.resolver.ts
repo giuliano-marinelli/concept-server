@@ -122,6 +122,7 @@ export class UsersResolver {
     @Args('password') password: string,
     @AuthUser() authUser: User
   ) {
+    console.log('checkPassword', authUser);
     return await this.usersService.checkPassword(id, password, authUser);
   }
 

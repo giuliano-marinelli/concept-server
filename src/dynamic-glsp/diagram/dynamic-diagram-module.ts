@@ -43,8 +43,7 @@ export class DynamicDiagramModule extends DiagramModule {
   readonly diagramType = 'dynamic';
   readonly services: ExternalServices;
 
-  constructor(services?: ExternalServices) {
-    console.log('DiagramModule created');
+  constructor(services: ExternalServices) {
     super();
     this.services = services;
   }

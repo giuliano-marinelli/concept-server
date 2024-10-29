@@ -1,18 +1,21 @@
 import { ConflictException, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { SelectionInput } from '@nestjs!/graphql-filter';
 
 import * as bcrypt from 'bcryptjs';
-import * as DeviceDetector from 'device-detector-js';
 import { GraphQLError, GraphQLErrorOptions } from 'graphql';
 import { Repository } from 'typeorm';
+import * as validateUUID from 'uuid-validate';
 
 import { Session } from 'src/sessions/entities/session.entity';
 import { Role, User } from 'src/users/entities/user.entity';
 
 import { SharedService } from 'src/shared/shared.service';
+
+import DeviceDetector = require('device-detector-js');
 
 @Injectable()
 export class AuthService {
@@ -21,12 +24,70 @@ export class AuthService {
 
   constructor(
     private jwtService: JwtService,
+    private configService: ConfigService,
     private sharedService: SharedService,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     @InjectRepository(Session)
     private sessionsRepository: Repository<Session>
   ) {}
+
+  async checkUser(
+    token: string,
+    userAgent: string,
+    ip: string,
+    errorHandler: (message: string) => Error
+  ): Promise<User> {
+    // verify jwt token is valid
+    let decodedToken: any;
+    try {
+      decodedToken = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('SECRET_TOKEN')
+      });
+    } catch (error) {
+      throw errorHandler(this.errorMessage + 'parsing token error');
+    }
+
+    // check if token has user id and device
+    if (!decodedToken?.id || !decodedToken?.device || !validateUUID(decodedToken?.id))
+      throw errorHandler(this.errorMessage + 'invalid token');
+
+    // find user with token user id
+    const user = await this.usersRepository.findOne({
+      relations: { profile: true, emails: true },
+      where: { id: decodedToken.id }
+    });
+    if (!user) throw errorHandler(this.errorMessage + 'user not found');
+
+    // find session with same token
+    const session = await this.sessionsRepository.findOneBy({ token: token });
+    if (!session) throw errorHandler(this.errorMessage + 'session not found');
+    if (session.closedAt) throw errorHandler(this.errorMessage + 'session is closed');
+    if (session.blockedAt) throw errorHandler(this.errorMessage + 'session is blocked');
+
+    // detect the device from request header user-agent
+    const deviceDetector = new DeviceDetector();
+    const detectedDevice = this.sharedService.formatDevice(deviceDetector.parse(userAgent), ip);
+
+    // decrypt the device from jwt token
+    const decryptedDevice = this.sharedService.decryptDevice(decodedToken.device);
+
+    // here we check detected device is equal to the device in jwt token
+    // if it's not equal we block the session
+    if (JSON.stringify(detectedDevice) != JSON.stringify(decryptedDevice)) {
+      await this.sessionsRepository.update({ token: token }, { blockedAt: new Date() });
+
+      // HERE WE HAVE TO NOTIFY WITH EMAIL OR PUSH NOTIFICATION
+
+      throw errorHandler(this.errorMessage + 'devices not match');
+    }
+
+    // update session last activity
+    session.lastActivity = new Date();
+    await this.sessionsRepository.save(session);
+
+    return user;
+  }
 
   async login(usernameOrEmail: string, password: string, context: any) {
     // find user by username or verified email

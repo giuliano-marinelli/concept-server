@@ -1,9 +1,7 @@
-export interface Service {
-  [key: string]: (...args: any[]) => any;
-}
-
 export const ExternalServices = Symbol('ExternalServices');
 
 export interface ExternalServices {
-  [key: string]: any;
+  languageProvider?: (languageID: string, connectionAuth: any) => Promise<any> | any;
+  modelProvider?: (modelID: string, connectionAuth: any) => Promise<any> | any;
+  modelSaver?: (modelID: string, model: any, connectionAuth: any) => Promise<any> | any;
 }

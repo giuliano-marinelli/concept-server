@@ -1,23 +1,32 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 
 import {
-  ServerModule,
+  GLSPServerError,
   SocketLaunchOptions,
-  WebSocketServerLauncher,
   createAppModule,
   createSocketCliParser,
   defaultLaunchOptions
 } from '@eclipse-glsp/server/node';
 
 import { Container } from 'inversify';
+import {
+  DynamicWebSocketServerLauncher,
+  MessageConnectionAuth
+} from 'src/dynamic-glsp/server/dynamic-websocket-server-launcher';
+import * as uuid from 'uuid';
 
-import { UsersService } from 'src/users/users.service';
+import { AuthService } from 'src/auth/auth.service';
+import { MetamodelsService } from 'src/metamodels/metamodels.service';
 
 import { DynamicDiagramModule } from '../dynamic-glsp/diagram/dynamic-diagram-module';
+import { DynamicServerModule } from 'src/dynamic-glsp/server/dynamic-server-module';
 
 @Injectable()
 export class GLSPService implements OnModuleInit {
-  constructor(@Inject(UsersService) private readonly usersService: UsersService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly metamodelsService: MetamodelsService
+  ) {}
 
   onModuleInit() {
     this.launch().catch((error) => console.error('Error in dynamic GLSP server:', error));
@@ -37,16 +46,31 @@ export class GLSPService implements OnModuleInit {
     // load a new GLSP app module
     container.load(createAppModule(options));
 
-    // define NestJS services that can be used in the GLSP diagram module
+    // define services that GLSP needs to access the metamodels and models information
     const services = {
-      usersService: this.usersService
+      languageProvider: async (languageID: string, connectionAuth: MessageConnectionAuth) => {
+        const authUser = await this.authService.checkUser(
+          connectionAuth.auth,
+          connectionAuth.userAgent,
+          connectionAuth.ip,
+          (message) => new GLSPServerError(message)
+        );
+        return await this.metamodelsService?.findOne(
+          'f87f6b58-3256-4630-a629-8ad3c976a4f3',
+          { metanodes: true },
+          authUser
+        );
+      },
+      modelProvider: async (modelID: string, connectionAuth: MessageConnectionAuth) => {
+        return { id: uuid.v4(), nodes: [], edges: [] };
+      }
     };
 
     // create a GLSP Server Module with the Diagram Module (this will use a custom server module and diagram module for dynamic diagram language support)
-    const serverModule = new ServerModule().configureDiagramModule(new DynamicDiagramModule(services));
+    const serverModule = new DynamicServerModule().configureDiagramModule(new DynamicDiagramModule(services));
 
     // create a new WebSocketServerLauncher
-    const launcher = container.resolve(WebSocketServerLauncher);
+    const launcher = container.resolve(DynamicWebSocketServerLauncher);
 
     // configure the server module and start the server
     await launcher.configure(serverModule);
