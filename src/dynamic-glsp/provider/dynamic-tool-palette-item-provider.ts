@@ -8,7 +8,7 @@ export class DynamicToolPaletteItemProvider extends DefaultToolPaletteItemProvid
     return handlers
       .filter((handler) => handler.operationType === kind)
       .map((handler) =>
-        // use the label from the handler args if available, otherwise use the handler label
+        // use the label from the trigger action args if available, otherwise use the handler label
         handler.getTriggerActions().map((action) => this.create(action, action.args?.label ?? handler.label))
       )
       .reduce((accumulator, value) => accumulator.concat(value), [])

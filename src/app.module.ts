@@ -22,7 +22,7 @@ import { GLSPService } from './glsp/glsp.service';
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
 import { EmailsModule } from './emails/emails.module';
-import { MetamodelsModule } from './metamodels/metamodels.module';
+import { MetaModelsModule } from './meta-models/meta-models.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
@@ -93,7 +93,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     SessionsModule,
     EmailsModule,
-    MetamodelsModule,
+    MetaModelsModule,
     SharedModule
   ],
   providers: [

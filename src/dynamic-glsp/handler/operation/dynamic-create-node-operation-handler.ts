@@ -37,27 +37,23 @@ export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHa
   override createCommand(operation: CreateNodeOperation): MaybePromise<Command | undefined> {
     return this.commandOf(() => {
       const relativeLocation = this.getRelativeLocation(operation) ?? Point.ORIGIN;
-      const node = this.createNode((operation.args?.type as string) ?? DefaultTypes.NODE, relativeLocation);
-      const dynamicModel = this.modelState.sourceModel;
-      dynamicModel.nodes.push(node);
+      const node = this.createNode((operation.args?.nodeType as string) ?? DefaultTypes.NODE, relativeLocation);
+      this.modelState.sourceModel.nodes.push(node);
     });
   }
 
   protected createNode(nodeType: string, position?: Point): Node {
-    // const nodeCounter = this.modelState.index.getAllByClass(GNode).length;
-    const nodeSpec = nodeType
-      ? this.languageSpecification.language?.nodes?.find((node) => node.type === nodeType)
-      : undefined;
     return {
       id: uuid.v4(),
       type: nodeType,
-      name: nodeSpec?.label ?? 'Node',
-      position: position ?? Point.ORIGIN
+      position: position ?? Point.ORIGIN,
+      size: { width: 50, height: 25 },
+      model: undefined
     };
   }
 
   override getTriggerActions(): TriggerNodeCreationAction[] {
-    this.elementTypeIds = this.languageSpecification.language?.nodes?.map((node) => node.type) ?? this.elementTypeIds;
+    this.elementTypeIds = Object.keys(this.languageSpecification.language?.nodes) ?? this.elementTypeIds;
     return this.elementTypeIds.map((elementTypeId) => this.createTriggerNodeCreationAction(elementTypeId));
   }
 
@@ -69,7 +65,7 @@ export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHa
   }
 
   protected override createTriggerArgs(elementTypeId: string): Args | undefined {
-    return this.languageSpecification?.language?.nodes?.find((node) => node.type === elementTypeId) ?? undefined;
+    return { nodeType: elementTypeId, label: this.languageSpecification?.language?.nodes?.[elementTypeId]?.label };
   }
 
   protected override createTriggerGhostElement(elementTypeId: string): GhostElement | undefined {

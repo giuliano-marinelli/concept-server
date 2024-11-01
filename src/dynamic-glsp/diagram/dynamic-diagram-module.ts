@@ -6,6 +6,7 @@ import {
   DiagramModule,
   GModelFactory,
   GModelIndex,
+  GModelSerializer,
   InstanceMultiBinding,
   LabelEditValidator,
   ModelState,
@@ -28,6 +29,7 @@ import { DynamicPasteOperationHandler } from '../handler/operation/dynamic-paste
 import { DynamicReconnectEdgeOperationHandler } from '../handler/operation/dynamic-reconnect-edge-operation-handler';
 import { DynamicLabelEditValidator } from '../handler/validator/dynamic-label-edit-validator';
 import { DynamicGModelFactory } from '../model/dynamic-gmodel-factory';
+import { DynamicGModelSerializer } from '../model/dynamic-gmodel-serializer';
 import { DynamicLanguageSpecification, LanguageSpecification } from '../model/dynamic-language-specification';
 import { DynamicModelIndex } from '../model/dynamic-model-index';
 import { DynamicModelState } from '../model/dynamic-model-state';
@@ -58,7 +60,6 @@ export class DynamicDiagramModule extends DiagramModule {
     const context = { bind, isBound };
 
     // bind the injectable external services (it can provide access to services outside GLSP)
-    // must be used as a injectable in the constructor of other classes
     bind(ExternalServices).toConstantValue(this.services);
 
     // bind the injectable for dynamic language specification
@@ -76,7 +77,7 @@ export class DynamicDiagramModule extends DiagramModule {
    * Bind the diagram configuration which is used to define the diagram elements behaviour and restrictions.
    */
   protected bindDiagramConfiguration(): BindingTarget<DiagramConfiguration> {
-    return DynamicDiagramConfiguration;
+    return { service: DynamicDiagramConfiguration };
   }
 
   protected bindSourceModelStorage(): BindingTarget<SourceModelStorage> {
@@ -89,6 +90,10 @@ export class DynamicDiagramModule extends DiagramModule {
 
   protected bindGModelFactory(): BindingTarget<GModelFactory> {
     return { service: DynamicGModelFactory };
+  }
+
+  protected bindGModelSerializer(): BindingTarget<GModelSerializer> {
+    return { service: DynamicGModelSerializer };
   }
 
   protected override bindGModelIndex(): BindingTarget<GModelIndex> {

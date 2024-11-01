@@ -50,34 +50,10 @@ export class DynamicStorage extends AbstractJsonModelStorage {
   }
 
   protected override createModelForEmptyFile(): DynamicModel {
-    const personId = uuid.v4();
-    const studentId = uuid.v4();
-
     return {
       id: uuid.v4(),
-      nodes: [
-        {
-          type: 'entity',
-          id: personId,
-          name: 'Person',
-          position: { x: 100, y: 100 }
-        },
-        {
-          type: 'relationship',
-          id: studentId,
-          name: 'Student',
-          position: { x: 200, y: 100 }
-        }
-      ],
-      edges: [
-        {
-          type: 'connector',
-          id: uuid.v4(),
-          name: 'is a',
-          sourceId: personId,
-          targetId: studentId
-        }
-      ]
+      nodes: [],
+      edges: []
     };
   }
 }

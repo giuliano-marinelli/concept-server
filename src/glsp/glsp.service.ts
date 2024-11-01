@@ -9,14 +9,17 @@ import {
 } from '@eclipse-glsp/server/node';
 
 import { Container } from 'inversify';
+import { Language } from 'src/dynamic-glsp/protocol/language';
 import {
   DynamicWebSocketServerLauncher,
   MessageConnectionAuth
 } from 'src/dynamic-glsp/server/dynamic-websocket-server-launcher';
 import * as uuid from 'uuid';
 
+import { MetaModel } from 'src/meta-models/entities/meta-model.entity';
+
 import { AuthService } from 'src/auth/auth.service';
-import { MetamodelsService } from 'src/metamodels/metamodels.service';
+import { MetaModelsService } from 'src/meta-models/meta-models.service';
 
 import { DynamicDiagramModule } from '../dynamic-glsp/diagram/dynamic-diagram-module';
 import { DynamicServerModule } from 'src/dynamic-glsp/server/dynamic-server-module';
@@ -25,7 +28,7 @@ import { DynamicServerModule } from 'src/dynamic-glsp/server/dynamic-server-modu
 export class GLSPService implements OnModuleInit {
   constructor(
     private readonly authService: AuthService,
-    private readonly metamodelsService: MetamodelsService
+    private readonly metamodelsService: MetaModelsService
   ) {}
 
   onModuleInit() {
@@ -55,11 +58,18 @@ export class GLSPService implements OnModuleInit {
           connectionAuth.ip,
           (message) => new GLSPServerError(message)
         );
-        return await this.metamodelsService?.findOne(
-          'f87f6b58-3256-4630-a629-8ad3c976a4f3',
-          { metanodes: true },
+
+        const metaModel: MetaModel = await this.metamodelsService?.findOne(
+          languageID,
+          { metaElements: true },
           authUser
         );
+
+        if (!metaModel) {
+          throw new GLSPServerError(`MetaModel with id ${languageID} not found`);
+        }
+
+        return this.parseMetaModel(metaModel);
       },
       modelProvider: async (modelID: string, connectionAuth: MessageConnectionAuth) => {
         return { id: uuid.v4(), nodes: [], edges: [] };
@@ -75,5 +85,40 @@ export class GLSPService implements OnModuleInit {
     // configure the server module and start the server
     await launcher.configure(serverModule);
     await launcher.start({ port: options.port, host: options.host, path: 'dynamic' });
+  }
+
+  parseMetaModel(metaModel: MetaModel) {
+    return {
+      id: metaModel.id,
+      name: metaModel.tag,
+      version: metaModel.version,
+      title: metaModel.name,
+      nodes: metaModel.metaElements
+        .filter((metaElement) => metaElement.type === 'node')
+        .reduce((acc, metaElement) => {
+          acc[metaElement.tag] = {
+            type: 'node',
+            name: metaElement.tag,
+            label: metaElement.name,
+            gModel: metaElement.gModel,
+            aModel: metaElement.aModel,
+            default: metaElement.defaultModel
+          };
+          return acc;
+        }, {}),
+      edges: metaModel.metaElements
+        .filter((metaElement) => metaElement.type === 'edge')
+        .reduce((acc, metaElement) => {
+          acc[metaElement.tag] = {
+            type: 'edge',
+            name: metaElement.tag,
+            label: metaElement.name,
+            gModel: metaElement.gModel,
+            aModel: metaElement.aModel,
+            default: metaElement.defaultModel
+          };
+          return acc;
+        }, {})
+    } as Language;
   }
 }

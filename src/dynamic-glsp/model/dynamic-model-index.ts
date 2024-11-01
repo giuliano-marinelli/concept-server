@@ -1,4 +1,4 @@
-import { GModelIndex } from '@eclipse-glsp/server';
+import { GLSPServerError, GModelElement, GModelIndex } from '@eclipse-glsp/server';
 
 import { injectable } from 'inversify';
 
@@ -7,6 +7,23 @@ import { DynamicModel, Edge, Node } from './dynamic-model';
 @injectable()
 export class DynamicModelIndex extends GModelIndex {
   protected idToModelElement = new Map<string, Node | Edge>();
+
+  protected override doIndex(element: GModelElement): void {
+    if (this.idToElement.has(element.id)) {
+      throw new GLSPServerError('Duplicate ID in model: ' + element.id);
+    }
+    this.idToElement.set(element.id, element);
+    const typeSet = this.typeToElements.get((element['args']?.['elementType'] as string) ?? element.type) ?? [];
+    typeSet.push(element);
+    this.typeToElements.set((element['args']?.['elementType'] as string) ?? element.type, typeSet);
+    (element.children ?? []).forEach((child) => {
+      this.doIndex(child);
+      // double check wether the parent reference of the child is set correctly
+      if (!child.parent) {
+        child.parent = element;
+      }
+    });
+  }
 
   indexModel(model: DynamicModel): void {
     this.idToModelElement.clear();

@@ -19,9 +19,9 @@ export namespace DynamicModel {
 export interface Node {
   type: string;
   id: string;
-  name: string;
   position: { x: number; y: number };
-  size?: { width: number; height: number };
+  size: { width: number; height: number };
+  model: any;
 }
 
 export namespace Node {
@@ -29,8 +29,8 @@ export namespace Node {
     return (
       AnyObject.is(object) &&
       hasStringProp(object, 'id') &&
-      hasStringProp(object, 'name') &&
-      hasObjectProp(object, 'position')
+      hasObjectProp(object, 'position') &&
+      hasObjectProp(object, 'size')
     );
   }
 }
@@ -38,10 +38,10 @@ export namespace Node {
 export interface Edge {
   type: string;
   id: string;
-  name: string;
   sourceId: string;
   targetId: string;
   routingPoints?: Point[];
+  model: any;
 }
 
 export namespace Edge {
@@ -49,7 +49,6 @@ export namespace Edge {
     return (
       AnyObject.is(object) &&
       hasStringProp(object, 'id') &&
-      hasStringProp(object, 'name') &&
       hasStringProp(object, 'sourceId') &&
       hasStringProp(object, 'targetId')
     );

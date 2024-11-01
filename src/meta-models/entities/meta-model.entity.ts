@@ -10,6 +10,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -17,13 +18,13 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 
-import { Metanode, MetanodeOrderInput, MetanodeWhereInput } from './metanode.entity';
+import { MetaElement, MetaElementOrderInput, MetaElementWhereInput } from './meta-element.entity';
 import { User, UserOrderInput, UserRefInput, UserWhereInput } from 'src/users/entities/user.entity';
 
 @ObjectType()
-@InputType('MetamodelInput', { isAbstract: true })
+@InputType('MetaModelInput', { isAbstract: true })
 @Entity()
-export class Metamodel {
+export class MetaModel {
   @Field(() => GraphQLUUID)
   @FilterField()
   @PrimaryGeneratedColumn('uuid')
@@ -39,9 +40,15 @@ export class Metamodel {
   @Field()
   @FilterField()
   @Column()
+  @Index()
   @MinLength(1)
   @MaxLength(30)
-  tagname: string;
+  tag: string;
+
+  @Field(() => [String], { nullable: true })
+  @FilterField()
+  @Column('text', { array: true, nullable: true })
+  tags: string[];
 
   @Field(() => GraphQLSemVer)
   @FilterField()
@@ -52,16 +59,6 @@ export class Metamodel {
   @FilterField()
   @Column({ nullable: true })
   logo: string;
-
-  @Field(() => [String], { nullable: true })
-  @FilterField()
-  @Column('text', { array: true, nullable: true })
-  tags: string[];
-
-  @Field(() => User, { nullable: true, middleware: [CheckPolicy] })
-  @FilterField(() => UserWhereInput, () => UserOrderInput)
-  @ManyToOne(() => User, (user) => user.metamodels)
-  owner: User;
 
   @Field({ nullable: true })
   @FilterField()
@@ -78,37 +75,42 @@ export class Metamodel {
   @DeleteDateColumn()
   deletedAt: Date;
 
+  @Field(() => User, { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => UserWhereInput, () => UserOrderInput)
+  @ManyToOne(() => User, (user) => user.ownMetaModels)
+  owner: User;
+
   @Field(() => [User], { nullable: true, middleware: [CheckPolicy] })
   @FilterField(() => UserWhereInput, () => UserOrderInput)
-  @ManyToMany(() => User, (user) => user.metamodels)
+  @ManyToMany(() => User, (user) => user.collabMetaModels)
   collaborators: User[];
 
-  @Field(() => [Metanode], { nullable: true, middleware: [CheckPolicy] })
-  @FilterField(() => MetanodeWhereInput, () => MetanodeOrderInput)
-  @OneToMany(() => Metanode, (metanode) => metanode.metamodel, { cascade: true })
-  metanodes: Metanode[];
+  @Field(() => [MetaElement], { nullable: true })
+  @FilterField(() => MetaElementWhereInput, () => MetaElementOrderInput)
+  @OneToMany(() => MetaElement, (metaElement) => metaElement.metaModel, { cascade: true })
+  metaElements: MetaElement[];
 }
 
 @InputType()
-export class MetamodelCreateInput extends PickType(Metamodel, ['name', 'tagname', 'logo', 'tags'], InputType) {
+export class MetaModelCreateInput extends PickType(MetaModel, ['name', 'tag', 'tags', 'logo'], InputType) {
   @Field(() => UserRefInput)
   owner: UserRefInput;
 }
 
 @InputType()
-export class MetamodelUpdateInput extends IntersectionType(
-  PickType(Metamodel, ['id'], InputType),
-  PartialType(MetamodelCreateInput)
+export class MetaModelUpdateInput extends IntersectionType(
+  PickType(MetaModel, ['id'], InputType),
+  PartialType(MetaModelCreateInput)
 ) {}
 
 @InputType()
-export class MetamodelRefInput extends PickType(Metamodel, ['id'], InputType) {}
+export class MetaModelRefInput extends PickType(MetaModel, ['id'], InputType) {}
 
-@FilterWhereType(Metamodel)
-export class MetamodelWhereInput {}
+@FilterWhereType(MetaModel)
+export class MetaModelWhereInput {}
 
-@FilterOrderType(Metamodel)
-export class MetamodelOrderInput {}
+@FilterOrderType(MetaModel)
+export class MetaModelOrderInput {}
 
-@Many(Metamodel, { setName: 'set' })
-export class Metamodels {}
+@Many(MetaModel, { setName: 'set' })
+export class MetaModels {}

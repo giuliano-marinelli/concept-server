@@ -21,6 +21,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -29,7 +30,7 @@ import {
 
 import { Profile, ProfileOrderInput, ProfileWhereInput } from './profile.entity';
 import { Email, EmailOrderInput, EmailWhereInput } from 'src/emails/entities/email.entity';
-import { Metamodel, MetamodelOrderInput, MetamodelWhereInput } from 'src/metamodels/entities/metamodel.entity';
+import { MetaModel, MetaModelOrderInput, MetaModelWhereInput } from 'src/meta-models/entities/meta-model.entity';
 import { Session, SessionOrderInput, SessionWhereInput } from 'src/sessions/entities/session.entity';
 
 export enum Role {
@@ -131,11 +132,17 @@ export class User {
   @Extensions({ owner: 'id' })
   sessions: Session[];
 
-  @Field(() => [Metamodel], { nullable: true, middleware: [CheckPolicy] })
-  @FilterField(() => MetamodelWhereInput, () => MetamodelOrderInput)
-  @OneToMany(() => Metamodel, (metamodel) => metamodel.owner)
+  @Field(() => [MetaModel], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
+  @OneToMany(() => MetaModel, (metaModel) => metaModel.owner)
   @Extensions({ owner: 'id' })
-  metamodels: Metamodel[];
+  ownMetaModels: MetaModel[];
+
+  @Field(() => [MetaModel], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
+  @ManyToMany(() => MetaModel, (metaModel) => metaModel.collaborators)
+  @Extensions({ owner: 'id' })
+  collabMetaModels: MetaModel[];
 }
 
 @InputType()

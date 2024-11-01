@@ -181,150 +181,195 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
-type Metamodel {
+"""Defines if the element is a node or an edge."""
+enum LanguageElementType {
+  """An edge element of the meta model."""
+  EDGE
+
+  """A node element of the meta model."""
+  NODE
+}
+
+type MetaElement {
+  aModel: JSON
+  createdAt: DateTime
+  defaultModel: JSON
+  deletedAt: DateTime
+  gModel: JSON
+  id: UUID!
+  metaModel: MetaModel!
+  name: String
+  preview: String
+  tag: String!
+  type: LanguageElementType
+  updatedAt: DateTime
+}
+
+input MetaElementCreateInput {
+  aModel: JSON
+  defaultModel: JSON
+  gModel: JSON
+  metaModel: MetaModelRefInput!
+  name: String
+  preview: String
+  tag: String!
+  type: LanguageElementType
+}
+
+input MetaElementInput {
+  aModel: JSON
+  createdAt: DateTime
+  defaultModel: JSON
+  deletedAt: DateTime
+  gModel: JSON
+  id: UUID!
+  metaModel: MetaModelInput!
+  name: String
+  preview: String
+  tag: String!
+  type: LanguageElementType
+  updatedAt: DateTime
+}
+
+""""""
+input MetaElementOrderInput {
+  createdAt: OrderDirection
+  deletedAt: OrderDirection
+  id: OrderDirection
+  metaModel: MetaModelOrderInput
+  name: OrderDirection
+  preview: OrderDirection
+  tag: OrderDirection
+  type: OrderDirection
+  updatedAt: OrderDirection
+}
+
+input MetaElementUpdateInput {
+  aModel: JSON
+  defaultModel: JSON
+  gModel: JSON
+  id: UUID!
+  name: String
+  preview: String
+  tag: String
+  type: LanguageElementType
+}
+
+""""""
+input MetaElementWhereInput {
+  createdAt: DateTimeWhereInput
+  deletedAt: DateTimeWhereInput
+  id: StringWhereInput
+  metaModel: MetaModelWhereInput
+  name: StringWhereInput
+  preview: StringWhereInput
+  tag: StringWhereInput
+  type: StringWhereInput
+  updatedAt: DateTimeWhereInput
+}
+
+type MetaModel {
   collaborators: [User!]
   createdAt: DateTime
   deletedAt: DateTime
   id: UUID!
   logo: String
-  metanodes: [Metanode!]
+  metaElements: [MetaElement!]
   name: String
   owner: User
-  tagname: String!
+  tag: String!
   tags: [String!]
   updatedAt: DateTime
   version: SemVer!
 }
 
-input MetamodelCreateInput {
+input MetaModelCreateInput {
   logo: String
   name: String
   owner: UserRefInput!
-  tagname: String!
+  tag: String!
   tags: [String!]
 }
 
-input MetamodelInput {
+input MetaModelInput {
   collaborators: [UserInput!]
   createdAt: DateTime
   deletedAt: DateTime
   id: UUID!
   logo: String
-  metanodes: [MetanodeInput!]
+  metaElements: [MetaElementInput!]
   name: String
   owner: UserInput
-  tagname: String!
+  tag: String!
   tags: [String!]
   updatedAt: DateTime
   version: SemVer!
 }
 
 """"""
-input MetamodelOrderInput {
+input MetaModelOrderInput {
   collaborators: UserOrderInput
   createdAt: OrderDirection
   deletedAt: OrderDirection
   id: OrderDirection
   logo: OrderDirection
-  metanodes: MetanodeOrderInput
+  metaElements: MetaElementOrderInput
   name: OrderDirection
   owner: UserOrderInput
-  tagname: OrderDirection
+  tag: OrderDirection
   tags: OrderDirection
   updatedAt: OrderDirection
   version: OrderDirection
 }
 
-input MetamodelUpdateInput {
+input MetaModelRefInput {
+  id: UUID!
+}
+
+input MetaModelUpdateInput {
   id: UUID!
   logo: String
   name: String
   owner: UserRefInput
-  tagname: String
+  tag: String
   tags: [String!]
 }
 
 """"""
-input MetamodelWhereInput {
+input MetaModelWhereInput {
   collaborators: UserWhereInput
   createdAt: DateTimeWhereInput
   deletedAt: DateTimeWhereInput
   id: StringWhereInput
   logo: StringWhereInput
-  metanodes: MetanodeWhereInput
+  metaElements: MetaElementWhereInput
   name: StringWhereInput
   owner: UserWhereInput
-  tagname: StringWhereInput
+  tag: StringWhereInput
   tags: StringWhereInput
   updatedAt: DateTimeWhereInput
   version: StringWhereInput
 }
 
 """"""
-type Metamodels {
+type MetaModels {
   count: Int!
-  set: [Metamodel!]
-}
-
-type Metanode {
-  createdAt: DateTime
-  deletedAt: DateTime
-  gModel: JSON
-  id: UUID!
-  metamodel: Metamodel!
-  name: String
-  preview: String
-  tagname: String!
-  updatedAt: DateTime
-}
-
-input MetanodeInput {
-  createdAt: DateTime
-  deletedAt: DateTime
-  gModel: JSON
-  id: UUID!
-  metamodel: MetamodelInput!
-  name: String
-  preview: String
-  tagname: String!
-  updatedAt: DateTime
-}
-
-""""""
-input MetanodeOrderInput {
-  createdAt: OrderDirection
-  deletedAt: OrderDirection
-  id: OrderDirection
-  metamodel: MetamodelOrderInput
-  name: OrderDirection
-  preview: OrderDirection
-  tagname: OrderDirection
-  updatedAt: OrderDirection
-}
-
-""""""
-input MetanodeWhereInput {
-  createdAt: DateTimeWhereInput
-  deletedAt: DateTimeWhereInput
-  id: StringWhereInput
-  metamodel: MetamodelWhereInput
-  name: StringWhereInput
-  preview: StringWhereInput
-  tagname: StringWhereInput
-  updatedAt: DateTimeWhereInput
+  set: [MetaModel!]
 }
 
 type Mutation {
   closeSession(id: UUID!): Session
   createEmail(emailCreateInput: EmailCreateInput!): Email
-  createMetamodel(logoFile: Upload, metamodelCreateInput: MetamodelCreateInput!): Metamodel
+  createMetaElement(metaElementCreateInput: MetaElementCreateInput!): MetaElement
+  createMetaModel(logoFile: Upload, metaModelCreateInput: MetaModelCreateInput!): MetaModel
   createUser(userCreateInput: UserCreateInput!): User
   deleteEmail(code: String!, id: UUID!, password: String!): UUID!
-  deleteMetamodel(id: UUID!, password: String!): UUID!
+  deleteMetaModel(id: UUID!, password: String!): UUID!
   deleteUser(id: UUID!, password: String!): UUID!
   resetUserPassword(code: String!, newPassword: String!): User
   updateEmailVerificationCode(id: UUID!): Email
-  updateMetamodel(logoFile: Upload, metamodelUpdateInput: MetamodelUpdateInput!): Metamodel
+  updateMetaElement(metaElementUpdateInput: MetaElementUpdateInput!): MetaElement
+  updateMetaModel(logoFile: Upload, metaModelUpdateInput: MetaModelUpdateInput!): MetaModel
   updateUser(avatarFile: Upload, userUpdateInput: UserUpdateInput!): User
   updateUserPassword(id: UUID!, newPassword: String!, password: String!): User
   updateUserPasswordCode(usernameOrEmail: String!): User
@@ -391,7 +436,7 @@ input ProfileWhereInput {
 
 type Query {
   checkEmailAddressExists(address: String!): Boolean
-  checkMetamodelTagnameExists(tagname: String!): Boolean
+  checkMetaModelTagExists(tag: String!): Boolean
   checkUserPassword(id: UUID!, password: String!): Boolean
   checkUserUsernameExists(username: String!): Boolean
   checkUserVerificationCode(code: String!, id: UUID!): Boolean
@@ -403,8 +448,8 @@ type Query {
 
   """Logout the current user. Close current session of device."""
   logout: Boolean!
-  metamodel(id: UUID!): Metamodel
-  metamodels(order: [MetamodelOrderInput!], pagination: PaginationInput, where: [MetamodelWhereInput!]): Metamodels!
+  metaModel(id: UUID!): MetaModel
+  metaModels(order: [MetaModelOrderInput!], pagination: PaginationInput, where: [MetaModelWhereInput!]): MetaModels!
   session(id: UUID!): Session
   sessions(order: [SessionOrderInput!], pagination: PaginationInput, where: [SessionWhereInput!]): Sessions!
   user(id: UUID!): User
@@ -441,7 +486,7 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2024-10-29T18:04:36.152Z"
+  lastActivity: DateTime! = "2024-11-01T19:07:00.842Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput
@@ -518,12 +563,13 @@ scalar UUID
 scalar Upload
 
 type User {
+  collabMetaModels: [MetaModel!]
   createdAt: DateTime
   deletedAt: DateTime
   emails: [Email!]
   id: UUID!
   lastVerificationTry: DateTime
-  metamodels: [Metamodel!]
+  ownMetaModels: [MetaModel!]
   password: String!
   passwordCode: String
   primaryEmail: Email
@@ -544,12 +590,13 @@ input UserCreateInput {
 }
 
 input UserInput {
+  collabMetaModels: [MetaModelInput!]
   createdAt: DateTime
   deletedAt: DateTime
   emails: [EmailInput!]
   id: UUID!
   lastVerificationTry: DateTime
-  metamodels: [MetamodelInput!]
+  ownMetaModels: [MetaModelInput!]
   password: String!
   passwordCode: String
   primaryEmail: EmailInput
@@ -563,12 +610,13 @@ input UserInput {
 
 """"""
 input UserOrderInput {
+  collabMetaModels: MetaModelOrderInput
   createdAt: OrderDirection
   deletedAt: OrderDirection
   emails: EmailOrderInput
   id: OrderDirection
   lastVerificationTry: OrderDirection
-  metamodels: MetamodelOrderInput
+  ownMetaModels: MetaModelOrderInput
   passwordCode: OrderDirection
   primaryEmail: EmailOrderInput
   profile: ProfileOrderInput
@@ -592,12 +640,13 @@ input UserUpdateInput {
 
 """"""
 input UserWhereInput {
+  collabMetaModels: MetaModelWhereInput
   createdAt: DateTimeWhereInput
   deletedAt: DateTimeWhereInput
   emails: EmailWhereInput
   id: StringWhereInput
   lastVerificationTry: DateTimeWhereInput
-  metamodels: MetamodelWhereInput
+  ownMetaModels: MetaModelWhereInput
   passwordCode: StringWhereInput
   primaryEmail: EmailWhereInput
   profile: ProfileWhereInput

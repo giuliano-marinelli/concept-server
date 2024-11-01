@@ -26,30 +26,34 @@ export class DynamicCreateEdgeOperationHandler extends JsonCreateEdgeOperationHa
 
   override createCommand(operation: CreateEdgeOperation): MaybePromise<Command | undefined> {
     return this.commandOf(() => {
-      const edgeType = operation.args?.type as string;
-      const edgeSpec = edgeType
-        ? this.languageSpecification.language?.edges?.find((edge) => edge.type === edgeType)
-        : undefined;
-      const edge: Edge = {
-        id: uuid.v4(),
-        type: edgeType,
-        name: edgeSpec?.label ?? 'edge',
-        sourceId: operation.sourceElementId,
-        targetId: operation.targetElementId
-      };
+      const edge = this.createEdge(
+        operation.args?.edgeType as string,
+        operation.sourceElementId,
+        operation.targetElementId
+      );
       this.modelState.sourceModel.edges.push(edge);
     });
   }
 
+  protected createEdge(edgeType: string, sourceElementId: string, targetElementId: string): Edge {
+    return {
+      id: uuid.v4(),
+      type: edgeType,
+      sourceId: sourceElementId,
+      targetId: targetElementId,
+      model: undefined
+    };
+  }
+
   override getTriggerActions(): TriggerEdgeCreationAction[] {
-    this.elementTypeIds = this.languageSpecification.language?.edges?.map((edge) => edge.type) ?? this.elementTypeIds;
+    this.elementTypeIds = Object.keys(this.languageSpecification.language?.edges) ?? this.elementTypeIds;
     return this.elementTypeIds.map((elementTypeId) =>
       TriggerEdgeCreationAction.create(DefaultTypes.EDGE, { args: this.createTriggerArgs(elementTypeId) })
     );
   }
 
   protected createTriggerArgs(elementTypeId: string): Args | undefined {
-    return this.languageSpecification?.language?.edges?.find((node) => node.type === elementTypeId) ?? undefined;
+    return { edgeType: elementTypeId, label: this.languageSpecification.language?.edges?.[elementTypeId]?.label };
   }
 
   get label(): string {
