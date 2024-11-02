@@ -92,7 +92,7 @@ export class DynamicGModelFactory implements GModelFactory {
     if (!nodeSpec.gModel['args']) nodeSpec.gModel['args'] = {};
     nodeSpec.gModel['args']['elementType'] = node.type;
 
-    const gNode = this.gModelSerializer.createElement(nodeSpec.gModel, undefined, node) as GNode;
+    const gNode = this.gModelSerializer.createElement(nodeSpec.gModel, undefined, node.model) as GNode;
 
     return gNode;
   }
@@ -122,7 +122,7 @@ export class DynamicGModelFactory implements GModelFactory {
     if (!edgeSpec.gModel['args']) edgeSpec.gModel['args'] = {};
     edgeSpec.gModel['args']['elementType'] = edge.type;
 
-    const gEdge = this.gModelSerializer.createElement(edgeSpec.gModel, undefined, edge) as GEdge;
+    const gEdge = this.gModelSerializer.createElement(edgeSpec.gModel, undefined, edge.model) as GEdge;
 
     return gEdge;
   }

@@ -40,11 +40,14 @@ export class DynamicApplyLabelEditOperationHandler extends JsonOperationHandler 
 
       // if the model element was found, update its name with the new text, otherwise throw an error
       if (modelElement) {
-        // get binding variable based on label args textBind
-        const bindingVariable = this.gModelSerializer.getBindingVariable(gLabel.args['textBind'] as string);
-        if (bindingVariable) {
-          modelElement.model[bindingVariable] = operation.text;
-        } else {
+        // set the new text of the label in the model by using the textBind argument
+        try {
+          this.gModelSerializer.setBindingVariable(
+            modelElement.model,
+            gLabel.args['textBind'] as string,
+            operation.text
+          );
+        } catch (error) {
           throw new GLSPServerError(
             `Could not retrieve the binding variable for the label with id ${operation.labelId}`
           );

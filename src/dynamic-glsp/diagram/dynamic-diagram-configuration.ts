@@ -1,4 +1,3 @@
-import { DefaultTypes as types } from '@eclipse-glsp/protocol';
 import {
   DefaultTypes,
   DiagramConfiguration,
@@ -20,7 +19,14 @@ import {
   ShapeTypeHint
 } from '@eclipse-glsp/server';
 
+import { GDecision } from '../protocol/gdecision';
+import { GIteration } from '../protocol/giteration';
 import { injectable } from 'inversify';
+
+export namespace DynamicTypes {
+  export const ITERATION = 'iteration';
+  export const DECISION = 'decision';
+}
 
 @injectable()
 export class DynamicDiagramConfiguration implements DiagramConfiguration {
@@ -30,18 +36,23 @@ export class DynamicDiagramConfiguration implements DiagramConfiguration {
 
   get typeMapping(): Map<string, GModelElementConstructor<GModelElement>> {
     const mapping = new Map<string, GModelElementConstructor>();
-    mapping.set(types.GRAPH, GGraph);
-    mapping.set(types.NODE, GNode);
-    mapping.set(types.EDGE, GEdge);
-    mapping.set(types.PORT, GPort);
-    mapping.set(types.LABEL, GLabel);
-    mapping.set(types.COMPARTMENT, GCompartment);
-    mapping.set(types.BUTTON, GButton);
-    mapping.set(types.ISSUE_MARKER, GIssueMarker);
+    mapping.set(DefaultTypes.GRAPH, GGraph);
+    mapping.set(DefaultTypes.NODE, GNode);
+    mapping.set(DefaultTypes.EDGE, GEdge);
+    mapping.set(DefaultTypes.PORT, GPort);
+    mapping.set(DefaultTypes.LABEL, GLabel);
+    mapping.set(DefaultTypes.COMPARTMENT, GCompartment);
+    mapping.set(DefaultTypes.BUTTON, GButton);
+    mapping.set(DefaultTypes.ISSUE_MARKER, GIssueMarker);
 
-    mapping.set(types.HTML, GHtmlRoot);
-    mapping.set(types.PRE_RENDERED, GPreRenderedElement);
-    mapping.set(types.FOREIGN_OBJECT, GShapedPreRenderedElement);
+    mapping.set(DefaultTypes.HTML, GHtmlRoot);
+    mapping.set(DefaultTypes.PRE_RENDERED, GPreRenderedElement);
+    mapping.set(DefaultTypes.FOREIGN_OBJECT, GShapedPreRenderedElement);
+
+    // add dynamic types
+    mapping.set(DynamicTypes.ITERATION, GIteration);
+    mapping.set(DynamicTypes.DECISION, GDecision);
+
     return mapping;
   }
 

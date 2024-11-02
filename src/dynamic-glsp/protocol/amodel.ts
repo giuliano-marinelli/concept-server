@@ -31,7 +31,7 @@ export interface AModelEnumSchema extends AModelElementSchema {
 
 export interface AModelArraySchema extends AModelElementSchema {
   type: Type.ARRAY;
-  items: AModelElementSchema;
+  template: AModelElementSchema;
   default: any;
 }
 
