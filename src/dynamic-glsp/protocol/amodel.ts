@@ -1,8 +1,7 @@
 export enum Type {
   STRING = 'string',
-  NUMBER = 'number',
+  INTEGER = 'integer',
   BOOLEAN = 'boolean',
-  EMUM = 'enum',
   ARRAY = 'array',
   OBJECT = 'object'
 }
@@ -12,32 +11,28 @@ export enum EnumStyle {
   RADIO = 'radio'
 }
 
-export interface EnumValue {
-  value: string;
-  label: string;
-}
-
 export interface AModelElementSchema {
   type: Type;
-  name: string;
   label?: string;
 }
 
 export interface AModelEnumSchema extends AModelElementSchema {
-  type: Type.EMUM;
-  style: EnumStyle;
-  values: EnumValue[];
+  type: Type.STRING;
+  enum?: string[];
+  oneOf?: [{ const: string; title: string }];
 }
 
 export interface AModelArraySchema extends AModelElementSchema {
   type: Type.ARRAY;
-  template: AModelElementSchema;
+  items: AModelElementSchema;
   default: any;
 }
 
 export interface AModelObjectSchema extends AModelElementSchema {
   type: Type.OBJECT;
-  properties: AModelElementSchema[];
+  properties: {
+    [propertyName: string]: AModelElementSchema;
+  };
 }
 
 export interface AModelRootSchema extends AModelObjectSchema {}

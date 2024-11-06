@@ -1,6 +1,5 @@
 import { GEdge, GGraph, GLSPServerError, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
 
-import { AModelArraySchema, AModelEnumSchema, AModelObjectSchema, AModelRootSchema, Type } from '../protocol/amodel';
 import { inject, injectable } from 'inversify';
 
 import { DynamicGModelSerializer } from './dynamic-gmodel-serializer';
@@ -91,6 +90,10 @@ export class DynamicGModelFactory implements GModelFactory {
     // set the elementType argument for use in the model index for filtering nodes by type
     if (!nodeSpec.gModel['args']) nodeSpec.gModel['args'] = {};
     nodeSpec.gModel['args']['elementType'] = node.type;
+    nodeSpec.gModel['args']['elementLabel'] = nodeSpec.label;
+
+    nodeSpec.gModel['args']['aModel'] = nodeSpec.aModel;
+    nodeSpec.gModel['args']['model'] = node.model;
 
     const gNode = this.gModelSerializer.createElement(nodeSpec.gModel, undefined, node.model) as GNode;
 
@@ -121,6 +124,10 @@ export class DynamicGModelFactory implements GModelFactory {
     // set the elementType argument for use in the model index for filtering edges by type
     if (!edgeSpec.gModel['args']) edgeSpec.gModel['args'] = {};
     edgeSpec.gModel['args']['elementType'] = edge.type;
+    edgeSpec.gModel['args']['elementLabel'] = edgeSpec.label;
+
+    edgeSpec.gModel['args']['aModel'] = edgeSpec.aModel;
+    edgeSpec.gModel['args']['model'] = edge.model;
 
     const gEdge = this.gModelSerializer.createElement(edgeSpec.gModel, undefined, edge.model) as GEdge;
 
