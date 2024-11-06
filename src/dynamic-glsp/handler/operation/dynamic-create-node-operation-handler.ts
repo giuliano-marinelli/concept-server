@@ -69,11 +69,9 @@ export class DynamicCreateNodeOperationHandler extends JsonCreateNodeOperationHa
   }
 
   protected override createTriggerGhostElement(elementTypeId: string): GhostElement | undefined {
-    const ghostNode = this.createNode(elementTypeId);
-    ghostNode.model = 'ghost';
     return {
-      template: this.serializer.createSchema(this.modelFactory.createNode(ghostNode)),
-      dynamic: false
+      template: this.serializer.createSchema(this.modelFactory.createNode(this.createNode(elementTypeId))),
+      dynamic: true
     };
   }
 

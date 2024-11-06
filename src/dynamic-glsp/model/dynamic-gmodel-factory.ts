@@ -45,9 +45,6 @@ export class DynamicGModelFactory implements GModelFactory {
 
     // if the node does not have a model, create a new model with the default values
     if (!node.model) node.model = this.gModelSerializer.processAutoincrement(nodeSpec.default, autoincrement);
-    // when node is ghost, set the model without the autoincrement value
-    // because ghost node with dynamic model broke model change operation
-    if (node.model == 'ghost') node.model = this.gModelSerializer.processAutoincrement(nodeSpec.default);
 
     // set generic gModel properties (this properties can't be setted by the language specification)
     nodeSpec.gModel.id = node.id;
