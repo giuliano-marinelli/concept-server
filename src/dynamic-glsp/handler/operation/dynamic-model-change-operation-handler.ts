@@ -12,9 +12,6 @@ export class DynamicModelChangeOperationHandler extends JsonOperationHandler {
   @inject(DynamicModelState)
   protected override modelState: DynamicModelState;
 
-  @inject(DynamicGModelSerializer)
-  protected gModelSerializer: DynamicGModelSerializer;
-
   override createCommand(operation: ModelChangeOperation): MaybePromise<Command | undefined> {
     return this.commandOf(() => {
       // retrieve the model element using the operation's elementId

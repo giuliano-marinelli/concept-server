@@ -1,4 +1,4 @@
-import { GEdge, GGraph, GLSPServerError, GLabel, GModelFactory, GNode } from '@eclipse-glsp/server';
+import { GEdge, GGraph, GLSPServerError, GModelFactory, GNode } from '@eclipse-glsp/server';
 
 import { inject, injectable } from 'inversify';
 
@@ -31,8 +31,10 @@ export class DynamicGModelFactory implements GModelFactory {
   }
 
   createNode(node: Node): GNode {
-    // get the node specification from the language specification
-    const nodeSpec = node.type ? this.languageSpecification?.language?.nodes?.[node.type] : undefined;
+    // make a copy of the node specification from the language specification
+    const nodeSpec = node.type
+      ? JSON.parse(JSON.stringify(this.languageSpecification?.language?.nodes?.[node.type]))
+      : undefined;
 
     if (!nodeSpec) {
       throw new GLSPServerError(`Node type ${node.type} not found in language specification.`);
@@ -68,8 +70,10 @@ export class DynamicGModelFactory implements GModelFactory {
   }
 
   createEdge(edge: Edge): GEdge {
-    // get the edge specification from the language specification
-    const edgeSpec = edge.type ? this.languageSpecification?.language?.edges?.[edge.type] : undefined;
+    // make a copy of the edge specification from the language specification
+    const edgeSpec = edge.type
+      ? JSON.parse(JSON.stringify(this.languageSpecification?.language?.edges?.[edge.type]))
+      : undefined;
 
     if (!edgeSpec) {
       throw new GLSPServerError(`Edge type ${edge.type} not found in language specification.`);
