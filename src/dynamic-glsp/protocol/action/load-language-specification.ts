@@ -1,4 +1,4 @@
-import { Action, Args, RequestAction, ResponseAction, hasObjectProp } from '@eclipse-glsp/server';
+import { Action, Args, RequestAction, ResponseAction, hasObjectProp } from '@eclipse-glsp/protocol';
 
 /*
  This RequestAction and ResponseActions interfaces must be in a shared project to be used in both the client and server.

@@ -25,6 +25,7 @@ import { DynamicCreateEdgeOperationHandler } from '../handler/operation/dynamic-
 import { DynamicCreateNodeOperationHandler } from '../handler/operation/dynamic-create-node-operation-handler';
 import { DynamicCutOperationHandler } from '../handler/operation/dynamic-cut-operation-handler';
 import { DynamicDeleteElementOperationHandler } from '../handler/operation/dynamic-delete-element-operation-handler';
+import { DynamicModelChangeOperationHandler } from '../handler/operation/dynamic-model-change-operation-handler';
 import { DynamicPasteOperationHandler } from '../handler/operation/dynamic-paste-operation-handler';
 import { DynamicReconnectEdgeOperationHandler } from '../handler/operation/dynamic-reconnect-edge-operation-handler';
 import { DynamicLabelEditValidator } from '../handler/validator/dynamic-label-edit-validator';
@@ -122,6 +123,7 @@ export class DynamicDiagramModule extends DiagramModule {
 
   protected override configureOperationHandlers(binding: InstanceMultiBinding<OperationHandlerConstructor>): void {
     super.configureOperationHandlers(binding);
+    binding.add(DynamicModelChangeOperationHandler);
     binding.add(DynamicCreateNodeOperationHandler);
     binding.add(DynamicCreateEdgeOperationHandler);
     binding.add(DynamicDeleteElementOperationHandler);

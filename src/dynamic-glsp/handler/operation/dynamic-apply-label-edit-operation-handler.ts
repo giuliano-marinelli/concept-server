@@ -28,7 +28,7 @@ export class DynamicApplyLabelEditOperationHandler extends JsonOperationHandler 
     return this.commandOf(() => {
       const index = this.modelState.index;
 
-      // retrieve the GLable that should be edited
+      // retrieve the GLabel that should be edited
       const gLabel = index.find(operation.labelId, toTypeGuard(GLabel));
 
       // retrieve the parent GNode or GEdge of the label that should be edited
