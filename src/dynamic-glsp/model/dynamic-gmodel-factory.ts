@@ -28,42 +28,6 @@ export class DynamicGModelFactory implements GModelFactory {
     const newRoot = GGraph.builder().id(dynamicModel.id).addChildren(childNodes).addChildren(childEdges).build();
 
     this.modelState.updateRoot(newRoot);
-
-    // const exampleAModel: AModelRootSchema = {
-    //   name: 'class',
-    //   type: Type.OBJECT,
-    //   properties: [
-    //     { type: Type.STRING, name: 'name', label: 'Name' },
-    //     {
-    //       type: Type.ARRAY,
-    //       name: 'attributes',
-    //       label: 'Attributes',
-    //       items: {
-    //         type: Type.OBJECT,
-    //         name: 'attribute',
-    //         properties: [
-    //           { type: Type.STRING, name: 'name' },
-    //           {
-    //             type: Type.EMUM,
-    //             name: 'datatype',
-    //             style: 'select',
-    //             values: [
-    //               { value: 'string', label: 'String' },
-    //               { value: 'number', label: 'Number' },
-    //               { value: 'boolean', label: 'Boolean' }
-    //             ]
-    //           } as AModelEnumSchema
-    //         ]
-    //       } as AModelObjectSchema,
-    //       default: [{ name: 'attribute', datatype: 'string' }]
-    //     } as AModelArraySchema
-    //   ]
-    // };
-
-    // const exampleAModelInstance = {
-    //   name: 'Persona',
-    //   attributes: [{ name: 'Nombre', datatype: 'string' }]
-    // };
   }
 
   createNode(node: Node): GNode {
@@ -79,6 +43,9 @@ export class DynamicGModelFactory implements GModelFactory {
 
     // if the node does not have a model, create a new model with the default values
     if (!node.model) node.model = this.gModelSerializer.processAutoincrement(nodeSpec.default, autoincrement);
+    // when node is ghost, set the model without the autoincrement value
+    // because ghost node with dynamic model broke model change operation
+    if (node.model == 'ghost') node.model = this.gModelSerializer.processAutoincrement(nodeSpec.default);
 
     // set generic gModel properties (this properties can't be setted by the language specification)
     nodeSpec.gModel.id = node.id;

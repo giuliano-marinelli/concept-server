@@ -14,6 +14,7 @@ export enum EnumStyle {
 export interface AModelElementSchema {
   type: Type;
   label?: string;
+  default?: any;
 }
 
 export interface AModelEnumSchema extends AModelElementSchema {
@@ -25,7 +26,6 @@ export interface AModelEnumSchema extends AModelElementSchema {
 export interface AModelArraySchema extends AModelElementSchema {
   type: Type.ARRAY;
   items: AModelElementSchema;
-  default: any;
 }
 
 export interface AModelObjectSchema extends AModelElementSchema {
