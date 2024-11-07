@@ -1,4 +1,4 @@
-import { GEdgeSchema, GModelElementSchema, GNodeSchema } from '@eclipse-glsp/server';
+import { GEdgeSchema, GModelElementSchema, GNodeSchema } from '@eclipse-glsp/protocol';
 
 import { AModelElementSchema, AModelRootSchema } from './amodel';
 

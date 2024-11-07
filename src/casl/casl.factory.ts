@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AbilityBuilder, createAliasResolver, createMongoAbility } from '@casl/ability';
 
 import { Email } from 'src/emails/entities/email.entity';
+import { MetaModel } from 'src/meta-models/entities/meta-model.entity';
 import { Session } from 'src/sessions/entities/session.entity';
 import { Role, User } from 'src/users/entities/user.entity';
 
@@ -39,6 +40,20 @@ export class CaslFactory {
     allow(Action.Read, Email.name);
     forbid(Action.Read, Email.name, ['user.**', 'verificationCode', 'lastVerificationTry']);
     allow(Action.Filter, Email.name, ['address', 'verified']);
+
+    // MetaModels
+    allow(Action.Read, MetaModel.name);
+    allow(Action.Filter, MetaModel.name, [
+      'name',
+      'tag',
+      'tags',
+      'version',
+      'description',
+      'owner.username',
+      'collaborators.username',
+      'metaElements.name',
+      'metaElements.tag'
+    ]);
 
     // USER
     if (user?.role == Role.USER) {
