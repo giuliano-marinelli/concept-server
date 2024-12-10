@@ -73,6 +73,11 @@ export class GLSPService implements OnModuleInit {
       },
       modelProvider: async (modelID: string, connectionAuth: MessageConnectionAuth) => {
         return { id: uuid.v4(), nodes: [], edges: [] };
+      },
+      modelSaver: async (modelID: string, model: any, preview: any, connectionAuth: MessageConnectionAuth) => {
+        console.log('model saved:', preview);
+
+        return;
       }
     };
 

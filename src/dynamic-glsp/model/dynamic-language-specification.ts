@@ -1,7 +1,7 @@
 import { GLSPServerError } from '@eclipse-glsp/server';
 
 import { ExternalServices } from '../diagram/dynamic-external-services';
-import { LoadLanguageSpecificationAction } from '../protocol/action/load-language-specification';
+import { LoadLanguageSpecificationAction } from '../protocol/action/language-specification-load';
 import { Language } from '../protocol/language';
 import { AuthClientAction } from '../server/dynamic-auth-client-action';
 import { inject, injectable } from 'inversify';

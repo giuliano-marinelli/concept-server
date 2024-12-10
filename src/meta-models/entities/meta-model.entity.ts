@@ -58,6 +58,12 @@ export class MetaModel {
   @Field({ nullable: true })
   @FilterField()
   @Column({ nullable: true })
+  @MaxLength(500)
+  description: string;
+
+  @Field({ nullable: true })
+  @FilterField()
+  @Column({ nullable: true })
   logo: string;
 
   @Field({ nullable: true })

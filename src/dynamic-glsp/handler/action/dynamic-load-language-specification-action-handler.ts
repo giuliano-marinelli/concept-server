@@ -5,7 +5,7 @@ import { DynamicLanguageSpecification } from 'src/dynamic-glsp/model/dynamic-lan
 import {
   LoadLanguageSpecificationAction,
   ReadyLanguageSpecificationAction
-} from 'src/dynamic-glsp/protocol/action/load-language-specification';
+} from 'src/dynamic-glsp/protocol/action/language-specification-load';
 import { AuthClientAction } from 'src/dynamic-glsp/server/dynamic-auth-client-action';
 
 @injectable()

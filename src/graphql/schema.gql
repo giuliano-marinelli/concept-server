@@ -272,6 +272,7 @@ type MetaModel {
   collaborators: [User!]
   createdAt: DateTime
   deletedAt: DateTime
+  description: String
   id: UUID!
   logo: String
   metaElements: [MetaElement!]
@@ -295,6 +296,7 @@ input MetaModelInput {
   collaborators: [UserInput!]
   createdAt: DateTime
   deletedAt: DateTime
+  description: String
   id: UUID!
   logo: String
   metaElements: [MetaElementInput!]
@@ -311,6 +313,7 @@ input MetaModelOrderInput {
   collaborators: UserOrderInput
   createdAt: OrderDirection
   deletedAt: OrderDirection
+  description: OrderDirection
   id: OrderDirection
   logo: OrderDirection
   metaElements: MetaElementOrderInput
@@ -340,6 +343,7 @@ input MetaModelWhereInput {
   collaborators: UserWhereInput
   createdAt: DateTimeWhereInput
   deletedAt: DateTimeWhereInput
+  description: StringWhereInput
   id: StringWhereInput
   logo: StringWhereInput
   metaElements: MetaElementWhereInput
@@ -486,7 +490,7 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2024-11-07T14:16:28.757Z"
+  lastActivity: DateTime! = "2024-12-10T15:01:33.958Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput

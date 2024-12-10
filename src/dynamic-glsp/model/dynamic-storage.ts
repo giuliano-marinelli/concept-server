@@ -1,12 +1,7 @@
-import {
-  AbstractJsonModelStorage,
-  GLSPServerError,
-  MaybePromise,
-  RequestModelAction,
-  SaveModelAction
-} from '@eclipse-glsp/server/node';
+import { AbstractJsonModelStorage, GLSPServerError, RequestModelAction } from '@eclipse-glsp/server/node';
 
 import { ExternalServices } from '../diagram/dynamic-external-services';
+import { SaveModelAction } from '../protocol/action/model-save';
 import { AuthClientAction } from '../server/dynamic-auth-client-action';
 import { inject, injectable } from 'inversify';
 import * as uuid from 'uuid';
@@ -38,15 +33,16 @@ export class DynamicStorage extends AbstractJsonModelStorage {
   }
 
   async saveSourceModel(action: SaveModelAction & AuthClientAction): Promise<void> {
-    const { connectionAuth } = action;
+    const { connectionAuth, preview } = action;
     const sourceUri = this.getFileUri(action);
+    const model = this.modelState.sourceModel;
 
     if (!this.services.modelSaver) {
       throw new GLSPServerError('No model saver was defined');
     }
 
     // use the model saver to save the model
-    await this.services.modelSaver(sourceUri, this.modelState.sourceModel, connectionAuth);
+    await this.services.modelSaver(sourceUri, model, preview, connectionAuth);
   }
 
   protected override createModelForEmptyFile(): DynamicModel {
