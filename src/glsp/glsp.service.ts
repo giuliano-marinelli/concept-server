@@ -9,7 +9,7 @@ import {
 } from '@eclipse-glsp/server/node';
 
 import { Container } from 'inversify';
-import { Language } from 'src/dynamic-glsp/protocol/language';
+import { Language, LanguageElementType } from 'src/dynamic-glsp/protocol/language';
 import {
   DynamicWebSocketServerLauncher,
   MessageConnectionAuth
@@ -99,7 +99,7 @@ export class GLSPService implements OnModuleInit {
       version: metaModel.version,
       title: metaModel.name,
       nodes: metaModel.metaElements
-        .filter((metaElement) => metaElement.type === 'node')
+        .filter((metaElement) => metaElement.type === LanguageElementType.NODE)
         .reduce((acc, metaElement) => {
           acc[metaElement.tag] = {
             type: 'node',
@@ -112,7 +112,7 @@ export class GLSPService implements OnModuleInit {
           return acc;
         }, {}),
       edges: metaModel.metaElements
-        .filter((metaElement) => metaElement.type === 'edge')
+        .filter((metaElement) => metaElement.type === LanguageElementType.EDGE)
         .reduce((acc, metaElement) => {
           acc[metaElement.tag] = {
             type: 'edge',

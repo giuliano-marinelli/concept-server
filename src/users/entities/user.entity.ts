@@ -12,6 +12,7 @@ import {
 
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
+import { Transform } from 'class-transformer';
 import { IsEmail, MaxLength, MinLength } from 'class-validator';
 import { GraphQLEmailAddress, GraphQLUUID } from 'graphql-scalars';
 import { CheckPolicy } from 'src/casl/casl.middleware';
@@ -73,10 +74,10 @@ export class User {
   @MaxLength(100)
   password: string;
 
-  @Field(() => Role, { nullable: true })
+  @Field({ nullable: true, defaultValue: Role.USER })
   @FilterField()
   @Column({ type: 'enum', enum: Role, default: Role.USER })
-  role: Role;
+  role: string;
 
   @Field(() => Email, { nullable: true, middleware: [CheckPolicy] })
   @FilterField(() => EmailWhereInput, () => EmailOrderInput)

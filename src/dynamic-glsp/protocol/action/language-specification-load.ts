@@ -1,5 +1,7 @@
 import { Action, Args, RequestAction, ResponseAction, hasObjectProp } from '@eclipse-glsp/protocol';
 
+import { Language, LanguageElement } from '../language';
+
 /*
  This RequestAction and ResponseActions interfaces must be in a shared project to be used in both the client and server.
  This are shared by: DynamicStartup and DynamicLoadLanguageSpecificationActionHandler
@@ -7,8 +9,8 @@ import { Action, Args, RequestAction, ResponseAction, hasObjectProp } from '@ecl
 
 export interface LoadLanguageSpecificationAction extends RequestAction<ReadyLanguageSpecificationAction> {
   kind: typeof LoadLanguageSpecificationAction.KIND;
-
-  languageID: string;
+  language: string | Language | LanguageElement;
+  showcaseMode?: boolean;
 }
 
 export namespace LoadLanguageSpecificationAction {
@@ -18,11 +20,17 @@ export namespace LoadLanguageSpecificationAction {
     return RequestAction.hasKind(object, KIND) && hasObjectProp(object, 'languageID');
   }
 
-  export function create(languageID: string, options: { args?: Args } = {}): LoadLanguageSpecificationAction {
+  export function create(
+    language: string | Language | LanguageElement,
+    options: {
+      showcaseMode?: boolean;
+      args?: Args;
+    } = {}
+  ): LoadLanguageSpecificationAction {
     return {
       kind: KIND,
       requestId: '',
-      languageID,
+      language,
       ...options
     };
   }

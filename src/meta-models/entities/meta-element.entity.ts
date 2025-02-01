@@ -12,9 +12,10 @@ import {
 import { GModelElementSchema } from '@eclipse-glsp/server';
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
+import { Transform } from 'class-transformer';
 import { MaxLength, MinLength } from 'class-validator';
 import { GraphQLJSON, GraphQLUUID } from 'graphql-scalars';
-import { AModelElementSchema } from 'src/dynamic-glsp/protocol/amodel';
+import { AModelRootSchema } from 'src/dynamic-glsp/protocol/amodel';
 import { LanguageElementType } from 'src/dynamic-glsp/protocol/language';
 import {
   Column,
@@ -56,10 +57,10 @@ export class MetaElement {
   @ManyToOne(() => MetaModel, (metamodel) => metamodel.metaElements)
   metaModel: MetaModel;
 
-  @Field(() => LanguageElementType, { nullable: true })
+  @Field({ nullable: true, defaultValue: LanguageElementType.NODE })
   @FilterField()
   @Column({ type: 'enum', enum: LanguageElementType, default: LanguageElementType.NODE })
-  type: LanguageElementType;
+  type: string;
 
   @Field({ nullable: true })
   @FilterField()
@@ -82,7 +83,7 @@ export class MetaElement {
 
   @Field(() => GraphQLJSON, { nullable: true })
   @Column({ type: 'jsonb', nullable: true })
-  aModel: AModelElementSchema;
+  aModel: AModelRootSchema;
 
   @Field(() => GraphQLJSON, { nullable: true })
   @Column({ type: 'jsonb', nullable: true })

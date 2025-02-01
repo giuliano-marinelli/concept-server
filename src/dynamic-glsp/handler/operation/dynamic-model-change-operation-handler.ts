@@ -2,7 +2,6 @@ import { Command, JsonOperationHandler, MaybePromise } from '@eclipse-glsp/serve
 
 import { DynamicModelState } from '../../model/dynamic-model-state';
 import { inject, injectable } from 'inversify';
-import { DynamicGModelSerializer } from 'src/dynamic-glsp/model/dynamic-gmodel-serializer';
 import { ModelChangeOperation } from 'src/dynamic-glsp/protocol/operation/model-change';
 
 @injectable()
