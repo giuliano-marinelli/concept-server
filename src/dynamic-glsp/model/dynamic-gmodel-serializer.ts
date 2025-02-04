@@ -45,7 +45,8 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
   /**
    * Gets the default model value object and the autoincrement value and returns the object with the autoincrement value set.
    *
-   * e.g. defaultModel = { name: 'element_${autoincrement}' }, autoincrement = 1 -> { name: 'element_1' }
+   * @example
+   * defaultModel = { name: 'element_${autoincrement}' }, autoincrement = 1 -> { name: 'element_1' }
    */
   processAutoincrement(defaultModel: any, autoincrement?: number): any {
     if (!defaultModel) return {};
@@ -61,21 +62,24 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
    * Gets the variables declared as ${varpath} in the bindingString and replaces them with the values from the bindings.
    */
   processBindingString(bindingString: string, model: any, path?: string, iterand?: string): any {
-    // traverse the model object to getall values between ${} in the string taking into account nested objects
-    // e.g. varpath = 'persona.nombre' -> model['persona']['nombre']
-    // e.g. varpath = 'persona.nombres[0]' -> model['persona']['nombres'][0]
-    const bindingVar = this.getBindingVariable(bindingString, path, iterand);
-    const varpath = bindingVar.split('.');
-    if (varpath) {
-      const value = varpath.reduce((acc, key) => {
-        if (key.includes('[')) {
-          const index = parseInt(key.match(/\[(.*?)\]/)[1]);
-          return acc?.[key.split('[')[0]][index];
-        } else return acc?.[key];
-      }, model);
-      return value;
+    // find all the variables in the string between ${var}
+    const vars = bindingString?.match(/\${(.*?)}/g);
+
+    if (vars) {
+      // verify if the binding string is composed by only one variable and no other characters
+      // if so, return the value of the variable in the model
+      if (vars.length == 1 && bindingString?.match(/^\${(.*?)}$/)) {
+        return this.getBindingVariableValue(this.getBindingVariable(bindingString, path, iterand), model);
+      }
+
+      // for each variable, find the value in the model and replace it in the string
+      vars.forEach((varpath) => {
+        const value = this.getBindingVariableValue(this.getBindingVariable(varpath, path, iterand), model);
+        bindingString = bindingString.replace(varpath, value);
+      });
     }
-    return undefined;
+
+    return bindingString;
   }
 
   /**
@@ -192,23 +196,47 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
    *
    * If the binding string includes the iterand, it's replaced by the path.
    *
-   * e.g. bindingString = '${class.attributes}' -> 'class.attributes'
+   * @example
+   * bindingString = '${class.attributes}' -> 'class.attributes'
    *
-   * e.g. bindingString = '${attribute.name}', path = 'class.attributes[0]', iterand = 'attribute' -> 'class.attributes[0].name'
+   * @example
+   * bindingString = '${attribute.name}', path = 'class.attributes[0]', iterand = 'attribute' -> 'class.attributes[0].name'
    */
   getBindingVariable(bindingString: string, path?: string, iterand?: string): string {
     // get string between ${}
-    const match = bindingString.match(/\${(.*?)}/);
+    const match = bindingString?.match(/\${(.*?)}/);
     if (match) {
-      let varpath = match[1];
+      const varpath = match[1].split('.');
+
       // replace iterand with path if it's defined
-      if (iterand) {
-        varpath = varpath.replace(iterand, path);
+      if (iterand && varpath[0] == iterand) {
+        varpath[0] = path;
       }
-      return varpath;
+
+      return varpath.join('.');
     }
-    // const match = bindingString.match(/\${(.*?)}/);
-    // return match ? match[1] : undefined;
+  }
+
+  /**
+   * Traverse the model object to getall  values between ${} in the string taking into account nested objects
+   *
+   * @example
+   * varpath = 'persona.nombre' -> model['persona']['nombre']
+   *
+   * @example
+   * varpath = 'persona.nombres[0]' -> model['persona']['nombres'][0]
+   */
+  getBindingVariableValue(bindingVar: string, model: any): any {
+    const varpath = bindingVar.split('.');
+
+    if (!varpath) return null;
+
+    return varpath.reduce((acc, key) => {
+      if (key.includes('[')) {
+        const index = parseInt(key.match(/\[(.*?)\]/)[1]);
+        return acc?.[key.split('[')[0]][index];
+      } else return acc?.[key];
+    }, model);
   }
 
   /**
@@ -234,22 +262,6 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
     }, model);
   }
 
-  /**
-   * Add to path.
-   *
-   * e.g. previousPath = '', currentItem = 'attributes' -> 'attributes'
-   *
-   * e.g. previousPath = 'class', currentItem = 'attributes' -> 'class.attributes'
-   *
-   * e.g. previousPath = 'class', currentItem = 'attributes', index = 0 -> 'class.attributes[0]'
-   */
-  compoundPath(previousPath: string, currentItem: string, index?: number): string {
-    return (
-      (previousPath?.length ? previousPath + '.' : '') +
-      (index != undefined ? currentItem + '[' + index + ']' : currentItem)
-    );
-  }
-
   protected override initializeElement(
     element: GModelElement,
     gModel: GModelRootSchema,
@@ -264,13 +276,18 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
           // here we have to translate binding variables to values if they are used in the schema
           if (typeof value === 'string' && value.includes('$')) {
             (element as any)[key] = this.processBindingString(value, model, path, iterand);
+
+            // NEXT IS COMMENTED OUT BECAUSE IT IS NOT NEEDED AT THE MOMENT
+            // IT IS USED ON APPLY LABEL EDIT OPERATION (WHICH IS FOR EDIT PROPERTIES DIRECTLY ON THE DIAGRAM)
+            // THIS OPERATION IS NOT USED BECAUSE OF COMPOSED BINDING STRINGS
+
             // add argument for flag that the element property is bind to a model property
-            if (!gModel['args']) element.args = {};
-            if (!element.args) element.args = {};
-            // create keyBind variable full path
-            const keyBind = this.getBindingVariable(value, path, iterand);
-            gModel['args'] = { ...gModel['args'], [key + 'Bind']: keyBind };
-            element.args = { ...element.args, [key + 'Bind']: keyBind };
+            // if (!gModel['args']) element.args = {};
+            // if (!element.args) element.args = {};
+            // // create keyBind variable full path
+            // const keyBind = this.getBindingVariable(value, path, iterand);
+            // gModel['args'] = { ...gModel['args'], [key + 'Bind']: keyBind };
+            // element.args = { ...element.args, [key + 'Bind']: keyBind };
           } else {
             (element as any)[key] = value;
           }
@@ -291,39 +308,49 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
   ): GModelElement {
     if (child.type == DynamicTypes.ITERATION) {
       if (!parent) {
-        throw new GLSPServerError(`Iteration element must have a parent.`);
+        // throw new GLSPServerError(`Iteration element must have a parent.`);
+        // if it doesn't have a parent, we simply return undefined
+        return undefined;
       }
 
       const iteration = gModel as GIteration;
-      const iterable = this.processBindingString(iteration.iterable, model);
+      const iterable = this.processBindingString(iteration.iterable, model, path, iterand);
 
-      if (iterable) {
+      if (iterable && iteration.template) {
         // check if iterable is an array
         if (!Array.isArray(iterable)) {
-          throw new GLSPServerError(`Iteration iterable must be an array.`);
+          // throw new GLSPServerError(`Iteration iterable must be an array.`);
+          // if it's not an array, we simple return undefined
+          return undefined;
         }
 
-        // add iterable elements to the parent children list
-        parent.children = [
-          ...parent.children,
-          ...iterable.map((modelItem, index) => {
+        // compute iteration children
+        // filter out undefined children (e.g. if the child is an iteration element without content)
+        // and add them to parent children list
+        iterable
+          .map((modelItem, index) => {
             return this.createElement(
               iteration.template,
               parent,
               model,
-              this.compoundPath(path, this.getBindingVariable(iteration.iterable), index),
+              this.getBindingVariable(iteration.iterable, path, iterand) + '[' + index + ']',
               iteration.iterand,
               identifier + '_' + (iteration.iterand ?? 'iterand') + index
             );
           })
-        ];
+          .filter((child) => child != undefined)
+          .forEach((child) => {
+            parent.children.push(child);
+          });
       }
 
       return undefined;
     }
     if (child.type == DynamicTypes.DECISION) {
       if (!parent) {
-        throw new GLSPServerError(`Decision element must have a parent.`);
+        // throw new GLSPServerError(`Decision element must have a parent.`);
+        // if it doesn't have a parent, we simply return undefined
+        return undefined;
       }
 
       const decision = gModel as GDecision;
@@ -331,12 +358,12 @@ export class DynamicGModelSerializer extends DefaultGModelSerializer {
 
       // add the child to the parent children list if the condition is true
       // otherwise add the else child if it exists
-      if (condition) {
+      if (condition && decision.then) {
         parent.children = [
           ...parent.children,
           this.createElement(decision.then, parent, model, path, iterand, identifier)
         ];
-      } else if (decision.else) {
+      } else if (!condition && decision.else) {
         parent.children = [
           ...parent.children,
           this.createElement(decision.else, parent, model, path, iterand, identifier)
