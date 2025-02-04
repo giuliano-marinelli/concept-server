@@ -46,6 +46,9 @@ export class DynamicGModelFactory implements GModelFactory {
     // if the node does not have a model, create a new model with the default values
     if (!node.model) node.model = this.gModelSerializer.processAutoincrement(nodeSpec.default, autoincrement);
 
+    // if the node is the showcase element, process the autoincrement with a fixed value
+    if (node.id == 'showcase_element') node.model = this.gModelSerializer.processAutoincrement(nodeSpec.default, 1);
+
     // set generic gModel properties (this properties can't be setted by the language specification)
     nodeSpec.gModel.id = node.id;
     nodeSpec.gModel.position = node.position;
@@ -81,6 +84,9 @@ export class DynamicGModelFactory implements GModelFactory {
 
     // if the edge does not have a model, create a new model with the default values
     if (!edge.model) edge.model = this.gModelSerializer.processAutoincrement(edgeSpec.default, autoincrement);
+
+    // if the edge is the showcase element, process the autoincrement with a fixed value
+    if (edge.id == 'showcase_element') edge.model = this.gModelSerializer.processAutoincrement(edgeSpec.default, 1);
 
     // set generic gModel properties (this properties can't be setted by the language specification)
     edgeSpec.gModel.id = edge.id;

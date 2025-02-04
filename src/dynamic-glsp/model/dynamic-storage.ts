@@ -70,8 +70,8 @@ export class DynamicStorage extends AbstractJsonModelStorage {
     const showcaseNode = Object.values(language.nodes)[0];
     const showcaseEdge = Object.values(language.edges)[0];
 
-    // if showcase language has a node, add it to the model
-    if (showcaseNode) {
+    if (showcaseNode && !showcaseEdge) {
+      // create showcase node to the model
       const node = {
         id: 'showcase_element',
         type: showcaseNode.name,
@@ -79,18 +79,31 @@ export class DynamicStorage extends AbstractJsonModelStorage {
         size: { width: 50, height: 25 }
       };
       model.nodes.push(node);
+    } else if (showcaseEdge) {
+      // create source and target showcase nodes to the model
+      const sourceNode = {
+        id: 'source',
+        type: showcaseNode.name,
+        position: { x: -50, y: 0 },
+        size: { width: 10, height: 10 }
+      };
+      const targetNode = {
+        id: 'target',
+        type: showcaseNode.name,
+        position: { x: 50, y: 0 },
+        size: { width: 10, height: 10 }
+      };
+      // create showcase edge between source and target nodes
+      const edge = {
+        id: 'showcase_element',
+        type: showcaseEdge.name,
+        sourceId: 'source',
+        targetId: 'target'
+      };
+
+      model.nodes.push(sourceNode, targetNode);
+      model.edges.push(edge);
     }
-    //   else if (languageElement.type == LanguageElementType.EDGE) {
-    //     const edge = {
-    //       id: 'showcase',
-    //       type: languageElement.name,
-    //       source: 'source',
-    //       target: 'target',
-    //       model: undefined
-    //     };
-    //     this.modelState.sourceModel.nodes = [];
-    //     this.modelState.sourceModel.edges = [edge];
-    //   }
 
     return model;
   }

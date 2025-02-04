@@ -36,28 +36,44 @@ export class DynamicLanguageSpecification implements LanguageSpecification {
       language = await this.services.languageProvider(newLanguage, connectionAuth);
     } else if (typeof newLanguage === 'object') {
       // if showcase mode is false, use the the language directly
-      if (!showcaseMode) language = newLanguage as Language;
+      if (!showcaseMode) {
+        language = newLanguage as Language;
+      }
       // if showcase mode is true, create a showcase language with the language element
       else {
         const languageElement = newLanguage as LanguageElement;
-
-        language = {
-          id: 'showcase',
-          name: 'Showcase',
-          version: '0.0.0',
-          title: 'Showcase',
-          nodes:
-            languageElement.type == LanguageElementType.NODE
-              ? { [languageElement.name]: languageElement as LanguageNode }
-              : {},
-          edges:
-            languageElement.type == LanguageElementType.EDGE
-              ? { [languageElement.name]: languageElement as LanguageEdge }
-              : {}
-        };
+        language = this.createLanguageForShowcase(languageElement);
       }
     }
 
     this.language = language;
+  }
+
+  protected createLanguageForShowcase(languageElement: LanguageElement): Language {
+    return {
+      id: 'showcase',
+      name: 'Showcase',
+      title: 'Showcase',
+      version: '0.0.0',
+      nodes:
+        languageElement.type == LanguageElementType.NODE
+          ? { [languageElement.name]: languageElement as LanguageNode }
+          : {
+              showcaseNode: {
+                type: LanguageElementType.NODE,
+                name: 'showcaseNode',
+                label: 'Showcase Node',
+                gModel: {
+                  type: 'node'
+                },
+                aModel: {},
+                default: {}
+              } as LanguageNode
+            },
+      edges:
+        languageElement.type == LanguageElementType.EDGE
+          ? { [languageElement.name]: languageElement as LanguageEdge }
+          : {}
+    };
   }
 }
