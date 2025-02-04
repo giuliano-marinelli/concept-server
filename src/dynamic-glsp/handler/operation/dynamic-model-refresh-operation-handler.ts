@@ -3,7 +3,7 @@ import { Command, JsonOperationHandler, MaybePromise } from '@eclipse-glsp/serve
 import { inject, injectable } from 'inversify';
 import { LanguageSpecification } from 'src/dynamic-glsp/model/dynamic-language-specification';
 import { DynamicModelState } from 'src/dynamic-glsp/model/dynamic-model-state';
-import { RefreshModelOperation } from 'src/dynamic-glsp/protocol/operation/refresh-model';
+import { RefreshModelOperation } from 'src/dynamic-glsp/protocol/operation/model-refresh';
 
 @injectable()
 export class DynamicRefreshModelOperationHandler extends JsonOperationHandler {

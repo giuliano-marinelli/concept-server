@@ -25,10 +25,10 @@ import { DynamicCreateEdgeOperationHandler } from '../handler/operation/dynamic-
 import { DynamicCreateNodeOperationHandler } from '../handler/operation/dynamic-create-node-operation-handler';
 import { DynamicCutOperationHandler } from '../handler/operation/dynamic-cut-operation-handler';
 import { DynamicDeleteElementOperationHandler } from '../handler/operation/dynamic-delete-element-operation-handler';
-import { DynamicModelChangeOperationHandler } from '../handler/operation/dynamic-model-change-operation-handler';
+import { DynamicChangeModelOperationHandler } from '../handler/operation/dynamic-model-change-operation-handler';
+import { DynamicRefreshModelOperationHandler } from '../handler/operation/dynamic-model-refresh-operation-handler';
 import { DynamicPasteOperationHandler } from '../handler/operation/dynamic-paste-operation-handler';
 import { DynamicReconnectEdgeOperationHandler } from '../handler/operation/dynamic-reconnect-edge-operation-handler';
-import { DynamicRefreshModelOperationHandler } from '../handler/operation/dynamic-refresh-model-operation-handler';
 import { DynamicLabelEditValidator } from '../handler/validator/dynamic-label-edit-validator';
 import { DynamicGModelFactory } from '../model/dynamic-gmodel-factory';
 import { DynamicGModelSerializer } from '../model/dynamic-gmodel-serializer';
@@ -125,7 +125,7 @@ export class DynamicDiagramModule extends DiagramModule {
   protected override configureOperationHandlers(binding: InstanceMultiBinding<OperationHandlerConstructor>): void {
     super.configureOperationHandlers(binding);
     binding.add(DynamicRefreshModelOperationHandler);
-    binding.add(DynamicModelChangeOperationHandler);
+    binding.add(DynamicChangeModelOperationHandler);
     binding.add(DynamicCreateNodeOperationHandler);
     binding.add(DynamicCreateEdgeOperationHandler);
     binding.add(DynamicDeleteElementOperationHandler);

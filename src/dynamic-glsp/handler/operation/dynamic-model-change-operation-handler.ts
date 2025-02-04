@@ -2,16 +2,16 @@ import { Command, JsonOperationHandler, MaybePromise } from '@eclipse-glsp/serve
 
 import { DynamicModelState } from '../../model/dynamic-model-state';
 import { inject, injectable } from 'inversify';
-import { ModelChangeOperation } from 'src/dynamic-glsp/protocol/operation/model-change';
+import { ChangeModelOperation } from 'src/dynamic-glsp/protocol/operation/model-change';
 
 @injectable()
-export class DynamicModelChangeOperationHandler extends JsonOperationHandler {
-  readonly operationType = ModelChangeOperation.KIND;
+export class DynamicChangeModelOperationHandler extends JsonOperationHandler {
+  readonly operationType = ChangeModelOperation.KIND;
 
   @inject(DynamicModelState)
   protected override modelState: DynamicModelState;
 
-  override createCommand(operation: ModelChangeOperation): MaybePromise<Command | undefined> {
+  override createCommand(operation: ChangeModelOperation): MaybePromise<Command | undefined> {
     return this.commandOf(() => {
       // retrieve the model element using the operation's elementId
       const element = this.modelState.index.findNodeOrEdge(operation.elementId);
