@@ -69,15 +69,16 @@ export class MetaModelsService {
   }
 
   async delete(id: string, password: string, authUser: User) {
-    // only admin can delete other metamodels
-    if (id != authUser.id && authUser.role != Role.ADMIN)
-      throw new ForbiddenException('Cannot delete metamodels that are not of your own.');
-
     // check if metamodel exists
     const existent = await this.metaModelsRepository.findOne({
-      where: { id: id }
+      where: { id: id },
+      relations: { owner: true }
     });
     if (!existent) throw new ConflictException('Metamodel not found.');
+
+    // only admin can delete other metamodels
+    if (existent.owner.id != authUser.id && authUser.role != Role.ADMIN)
+      throw new ForbiddenException('Cannot delete metamodels that are not of your own.');
 
     // delete metamodel
     this.metaModelsRepository.softDelete({ id: id });
@@ -150,9 +151,16 @@ export class MetaModelsService {
     });
   }
 
-  async checkTagExists(tag: string) {
+  async checkTagExists(metaModel: string, tag: string) {
     const [set, count] = await this.metaModelsRepository.findAndCount({
-      where: { tag: tag }
+      where: { id: Not(Equal(metaModel)), tag: tag }
+    });
+    return count > 0;
+  }
+
+  async checkMetaElementTagExists(metaModel: string, metaElement: string, tag: string) {
+    const [set, count] = await this.metaElementsRepository.findAndCount({
+      where: { metaModel: { id: metaModel }, id: Not(Equal(metaElement)), tag: tag }
     });
     return count > 0;
   }

@@ -90,8 +90,21 @@ export class MetaModelsResolver {
     subject: MetaModel.name
   }))
   @Query(() => Boolean, { name: 'checkMetaModelTagExists', nullable: true })
-  async checkTagExists(@Args('tag') tag: string) {
-    return await this.metaModelsService.checkTagExists(tag);
+  async checkTagExists(@Args('metaModel', { type: () => GraphQLUUID }) metaModel: string, @Args('tag') tag: string) {
+    return await this.metaModelsService.checkTagExists(metaModel, tag);
+  }
+
+  @CheckPolicies(() => ({
+    action: Action.Read,
+    subject: MetaModel.name
+  }))
+  @Query(() => Boolean, { name: 'checkMetaElementTagExists', nullable: true })
+  async checkMetaElementTagExists(
+    @Args('metaModel', { type: () => GraphQLUUID }) metaModel: string,
+    @Args('metaElement', { type: () => GraphQLUUID }) metaElement: string,
+    @Args('tag') tag: string
+  ) {
+    return await this.metaModelsService.checkMetaElementTagExists(metaModel, metaElement, tag);
   }
 
   @CheckPolicies((args) => ({

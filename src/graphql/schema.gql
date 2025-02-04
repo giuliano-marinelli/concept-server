@@ -431,7 +431,8 @@ input ProfileWhereInput {
 
 type Query {
   checkEmailAddressExists(address: String!): Boolean
-  checkMetaModelTagExists(tag: String!): Boolean
+  checkMetaElementTagExists(metaElement: UUID!, metaModel: UUID!, tag: String!): Boolean
+  checkMetaModelTagExists(metaModel: UUID!, tag: String!): Boolean
   checkUserPassword(id: UUID!, password: String!): Boolean
   checkUserUsernameExists(username: String!): Boolean
   checkUserVerificationCode(code: String!, id: UUID!): Boolean
@@ -472,7 +473,7 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2025-02-04T18:58:02.054Z"
+  lastActivity: DateTime! = "2025-02-04T21:30:06.443Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput
