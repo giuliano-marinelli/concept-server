@@ -75,7 +75,7 @@ export class DynamicStorage extends AbstractJsonModelStorage {
       const node = {
         id: 'showcase_element',
         type: showcaseNode.name,
-        position: Point.ORIGIN,
+        position: { x: 0, y: 0 },
         size: { width: 50, height: 25 }
       };
       model.nodes.push(node);
@@ -84,14 +84,14 @@ export class DynamicStorage extends AbstractJsonModelStorage {
       const sourceNode = {
         id: 'source',
         type: showcaseNode.name,
-        position: { x: -50, y: 0 },
-        size: { width: 10, height: 10 }
+        position: { x: 0, y: 40 },
+        size: { width: 0, height: 0 }
       };
       const targetNode = {
         id: 'target',
         type: showcaseNode.name,
-        position: { x: 50, y: 0 },
-        size: { width: 10, height: 10 }
+        position: { x: 60, y: 0 },
+        size: { width: 0, height: 0 }
       };
       // create showcase edge between source and target nodes
       const edge = {
