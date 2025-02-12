@@ -20,10 +20,10 @@ importers:
         version: 6.7.3
       '@dynamic-glsp/protocol':
         specifier: ^1.0.0
-        version: link:../../@dynamic-glsp/protocol
+        version: file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))
       '@dynamic-glsp/server':
         specifier: ^1.0.0
-        version: link:../../@dynamic-glsp/server
+        version: file:../../@dynamic-glsp/server(@dynamic-glsp/protocol@file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))))(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(inversify@6.2.2(reflect-metadata@0.2.2))
       '@eclipse-glsp/protocol':
         specifier: ^2.3.0
         version: 2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))
@@ -250,7 +250,7 @@ importers:
         version: 11.0.5
       vscode-jsonrpc:
         specifier: ^8.2.0
-        version: 8.2.1
+        version: 8.2.0
       ws:
         specifier: ^8.18.0
         version: 8.18.0
@@ -576,6 +576,20 @@ packages:
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
+
+  '@dynamic-glsp/protocol@file:../../@dynamic-glsp/protocol':
+    resolution: {directory: ../../@dynamic-glsp/protocol, type: directory}
+    peerDependencies:
+      '@eclipse-glsp/protocol': '>=2.3.0'
+      '@eclipse-glsp/server': '>=2.3.0'
+
+  '@dynamic-glsp/server@file:../../@dynamic-glsp/server':
+    resolution: {directory: ../../@dynamic-glsp/server, type: directory}
+    peerDependencies:
+      '@dynamic-glsp/protocol': '>=1.0.0'
+      '@eclipse-glsp/protocol': '>=2.3.0'
+      '@eclipse-glsp/server': '>=2.3.0'
+      inversify: '>=6.2.2'
 
   '@eclipse-glsp/graph@2.3.0':
     resolution: {integrity: sha512-7b5ffgRXME1B5bXhjn2oJA/c/NHd0+9uuAdgiajyHtHZdmDCqGoFndiYh8uDVeaMXIRQJnFG4KoCnH15dyXjGw==}
@@ -4623,6 +4637,25 @@ snapshots:
       colorspace: 1.1.4
       enabled: 2.0.0
       kuler: 2.0.0
+
+  '@dynamic-glsp/protocol@file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))':
+    dependencies:
+      '@eclipse-glsp/protocol': 2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))
+      '@eclipse-glsp/server': 2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))
+
+  '@dynamic-glsp/server@file:../../@dynamic-glsp/server(@dynamic-glsp/protocol@file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))))(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(inversify@6.2.2(reflect-metadata@0.2.2))':
+    dependencies:
+      '@dynamic-glsp/protocol': file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))
+      '@eclipse-glsp/protocol': 2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))
+      '@eclipse-glsp/server': 2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))
+      inversify: 6.2.2(reflect-metadata@0.2.2)
+      reflect-metadata: 0.2.2
+      uuid: 11.0.5
+      vscode-jsonrpc: 8.2.1
+      ws: 8.18.0
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
 
   '@eclipse-glsp/graph@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))':
     dependencies:
