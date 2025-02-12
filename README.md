@@ -7,9 +7,10 @@ It's a [Nest](https://nestjs.com/) project that serves the [concept-client](http
 ## Setup
 
 1. Install [Node.js](https://nodejs.org)
-2. Install the DBMS you want, by default install [PostgreSQL](https://www.postgresql.org/)
-3. From project root folder install all the dependencies: `npm install`
-4. For serve [concept-client](https://github.com/giuliano-marinelli/concept-client), it must be located at sibling folder of this project, as shown:
+2. Install [pnpm](https://pnpm.io): `npm install -g pnpm@latest`
+3. Install the DBMS you want, by default install [PostgreSQL](https://www.postgresql.org/)
+4. From project root folder install all the dependencies: `pnpm install`
+5. For serve [concept-client](https://github.com/giuliano-marinelli/concept-client), it must be located at sibling folder of this project, as shown:
 
 ```
 concept
@@ -22,12 +23,32 @@ concept
 
 ### Development
 
-Run `npm start`: execute [nest start](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:3000](http://localhost:3000)
+Run `pnpm start`: execute [nest start](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:3000](http://localhost:3000)
 
-Run `npm run start:dev`: execute [nest start --watch](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:3000](http://localhost:3000) and any change automatically re-compiles and restart server.
+Run `pnpm watch`: execute [nest start --watch](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:3000](http://localhost:3000) and any change automatically re-compiles and restart server.
+
+### Development of [@dynamic-glsp](https://www.npmjs.com/settings/dynamic-glsp/packages) all-in-one
+
+For develop [concept-server](https://github.com/giuliano-marinelli/concept-server) along with their main packages [@dynamic-glsp/server](https://www.npmjs.com/package/@dynamic-glsp/server) and [@dynamic-glsp/protocol](https://www.npmjs.com/package/@dynamic-glsp/protocol). It packages must be located along side concept project, as shown:
+
+```
+concept
+└─ concept-client
+└─ concept-server
+
+@dynamic-glsp
+└─ client
+└─ server
+└─ protocol
+```
+
+If packages are not available locally it will use the registry uploaded ones.
+Only if the packages are available locally you can use the next command:
+
+Run `pnpm watch:all`: execute `concurrently` watch mode over [concept-server](https://github.com/giuliano-marinelli/concept-server), [@dynamic-glsp/server](https://www.npmjs.com/package/@dynamic-glsp/server) and [@dynamic-glsp/protocol](https://www.npmjs.com/package/@dynamic-glsp/protocol). Any changes on sub-packages re-compiles them and re-install them on server, and re-compile and restart server.
 
 ### Production
 
-Run `npm run build`: execute [nest build](https://docs.nestjs.com/cli/usages#nest-build) that generates **dist** folder at the project root folder for been used with node command.
+Run `pnpm build`: execute [nest build](https://docs.nestjs.com/cli/usages#nest-build) that generates **dist** folder at the project root folder for been used with node command.
 
-Run `npm run start:prod`: execute `node` command over **dist/main** folder to start server listening at [localhost:3000](http://localhost:3000).
+Run `pnpm prod`: execute `node` command over **dist/main** folder to start server listening at [localhost:3000](http://localhost:3000).

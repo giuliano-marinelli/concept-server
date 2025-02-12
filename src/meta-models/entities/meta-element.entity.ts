@@ -9,14 +9,12 @@ import {
   registerEnumType
 } from '@nestjs/graphql';
 
+import { AModelRootSchema, LanguageElementType } from '@dynamic-glsp/protocol';
 import { GModelElementSchema } from '@eclipse-glsp/server';
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
-import { Transform } from 'class-transformer';
 import { MaxLength, MinLength } from 'class-validator';
 import { GraphQLJSON, GraphQLUUID } from 'graphql-scalars';
-import { AModelRootSchema } from 'src/dynamic-glsp/protocol/amodel';
-import { LanguageElementType } from 'src/dynamic-glsp/protocol/language';
 import {
   Column,
   CreateDateColumn,

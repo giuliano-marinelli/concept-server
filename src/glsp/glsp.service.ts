@@ -1,5 +1,12 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 
+import { Language, LanguageElementType } from '@dynamic-glsp/protocol';
+import {
+  DynamicDiagramModule,
+  DynamicServerModule,
+  DynamicWebSocketServerLauncher,
+  MessageConnectionAuth
+} from '@dynamic-glsp/server';
 import {
   GLSPServerError,
   SocketLaunchOptions,
@@ -9,20 +16,12 @@ import {
 } from '@eclipse-glsp/server/node';
 
 import { Container } from 'inversify';
-import { Language, LanguageElementType } from 'src/dynamic-glsp/protocol/language';
-import {
-  DynamicWebSocketServerLauncher,
-  MessageConnectionAuth
-} from 'src/dynamic-glsp/server/dynamic-websocket-server-launcher';
 import * as uuid from 'uuid';
 
 import { MetaModel } from 'src/meta-models/entities/meta-model.entity';
 
 import { AuthService } from 'src/auth/auth.service';
 import { MetaModelsService } from 'src/meta-models/meta-models.service';
-
-import { DynamicDiagramModule } from '../dynamic-glsp/diagram/dynamic-diagram-module';
-import { DynamicServerModule } from 'src/dynamic-glsp/server/dynamic-server-module';
 
 @Injectable()
 export class GLSPService implements OnModuleInit {
