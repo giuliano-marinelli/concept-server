@@ -84,29 +84,6 @@ export class MetaModelsResolver {
     return await this.metaModelsService.delete(id, password, authUser);
   }
 
-  @Public()
-  @CheckPolicies(() => ({
-    action: Action.Read,
-    subject: MetaModel.name
-  }))
-  @Query(() => Boolean, { name: 'checkMetaModelTagExists', nullable: true })
-  async checkTagExists(@Args('metaModel', { type: () => GraphQLUUID }) metaModel: string, @Args('tag') tag: string) {
-    return await this.metaModelsService.checkTagExists(metaModel, tag);
-  }
-
-  @CheckPolicies(() => ({
-    action: Action.Read,
-    subject: MetaModel.name
-  }))
-  @Query(() => Boolean, { name: 'checkMetaElementTagExists', nullable: true })
-  async checkMetaElementTagExists(
-    @Args('metaModel', { type: () => GraphQLUUID }) metaModel: string,
-    @Args('metaElement', { type: () => GraphQLUUID }) metaElement: string,
-    @Args('tag') tag: string
-  ) {
-    return await this.metaModelsService.checkMetaElementTagExists(metaModel, metaElement, tag);
-  }
-
   @CheckPolicies((args) => ({
     action: Action.Update,
     subject: MetaModel.name,
@@ -132,8 +109,42 @@ export class MetaModelsResolver {
     @SelectionSet() selection: SelectionInput,
     @AuthUser() authUser: User
   ) {
-    console.log(metaElementUpdateInput);
     return await this.metaModelsService.updateMetaElement(metaElementUpdateInput, selection, authUser);
+  }
+
+  @CheckPolicies(() => ({
+    action: Action.Delete,
+    subject: MetaModel.name
+  }))
+  @Mutation(() => GraphQLUUID, { name: 'deleteMetaElement' })
+  async deleteMetaElement(@Args('id', { type: () => GraphQLUUID }) id: string, @AuthUser() authUser: User) {
+    return await this.metaModelsService.deleteMetaElement(id, authUser);
+  }
+
+  @Public()
+  @CheckPolicies(() => ({
+    action: Action.Read,
+    subject: MetaModel.name
+  }))
+  @Query(() => Boolean, { name: 'checkMetaModelTagExists', nullable: true })
+  async checkTagExists(
+    @Args('tag') tag: string,
+    @Args('metaModel', { type: () => GraphQLUUID, nullable: true }) metaModel: string
+  ) {
+    return await this.metaModelsService.checkTagExists(tag, metaModel);
+  }
+
+  @CheckPolicies(() => ({
+    action: Action.Read,
+    subject: MetaModel.name
+  }))
+  @Query(() => Boolean, { name: 'checkMetaElementTagExists', nullable: true })
+  async checkMetaElementTagExists(
+    @Args('tag') tag: string,
+    @Args('metaModel', { type: () => GraphQLUUID }) metaModel: string,
+    @Args('metaElement', { type: () => GraphQLUUID, nullable: true }) metaElement: string
+  ) {
+    return await this.metaModelsService.checkMetaElementTagExists(tag, metaModel, metaElement);
   }
 
   @Public()

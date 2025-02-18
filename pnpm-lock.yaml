@@ -19,10 +19,10 @@ importers:
         specifier: ^6.7.3
         version: 6.7.3
       '@dynamic-glsp/protocol':
-        specifier: ^1.0.0
+        specifier: ^1.0.1
         version: file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))
       '@dynamic-glsp/server':
-        specifier: ^1.0.0
+        specifier: ^1.0.1
         version: file:../../@dynamic-glsp/server(@dynamic-glsp/protocol@file:../../@dynamic-glsp/protocol(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))))(@eclipse-glsp/protocol@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(@eclipse-glsp/server@2.3.0(inversify@6.2.2(reflect-metadata@0.2.2)))(inversify@6.2.2(reflect-metadata@0.2.2))
       '@eclipse-glsp/protocol':
         specifier: ^2.3.0
@@ -4081,10 +4081,6 @@ packages:
     resolution: {integrity: sha512-C+r0eKJUIfiDIfwJhria30+TYWPtuHJXHtI7J0YlOmKAo7ogxP20T0zxB7HZQIFhIyvoBPwWskjxrvAtfjyZfA==}
     engines: {node: '>=14.0.0'}
 
-  vscode-jsonrpc@8.2.1:
-    resolution: {integrity: sha512-kdjOSJ2lLIn7r1rtrMbbNCHjyMPfRnowdKjBQ+mGq6NAW5QY2bEZC/khaC5OR8svbbjvLEaIXkOq45e2X9BIbQ==}
-    engines: {node: '>=14.0.0'}
-
   walker@1.0.8:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
 
@@ -4651,7 +4647,7 @@ snapshots:
       inversify: 6.2.2(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
       uuid: 11.0.5
-      vscode-jsonrpc: 8.2.1
+      vscode-jsonrpc: 8.2.0
       ws: 8.18.0
     transitivePeerDependencies:
       - bufferutil
@@ -8499,8 +8495,6 @@ snapshots:
   vary@1.1.2: {}
 
   vscode-jsonrpc@8.2.0: {}
-
-  vscode-jsonrpc@8.2.1: {}
 
   walker@1.0.8:
     dependencies:

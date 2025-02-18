@@ -147,7 +147,7 @@ export class User {
 }
 
 @InputType()
-export class UserCreateInput extends PickType(User, ['username', 'password', 'role', 'profile'], InputType) {
+export class UserCreateInput extends PickType(User, ['username', 'password', 'profile'], InputType) {
   @Field(() => GraphQLEmailAddress)
   @IsEmail()
   @MaxLength(100)

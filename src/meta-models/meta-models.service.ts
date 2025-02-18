@@ -151,16 +151,34 @@ export class MetaModelsService {
     });
   }
 
-  async checkTagExists(metaModel: string, tag: string) {
+  async deleteMetaElement(id: string, authUser: User) {
+    // check if metaelement exists
+    const existent = await this.metaElementsRepository.findOne({
+      where: { id: id },
+      relations: { metaModel: { owner: true } }
+    });
+    if (!existent) throw new ConflictException('Metaelement not found.');
+
+    // only admin can delete metaelements on other users metamodels
+    if (existent.metaModel.owner.id != authUser.id && authUser.role != Role.ADMIN)
+      throw new ForbiddenException('Cannot delete metaelements on metamodels own by users other than yourself.');
+
+    // delete metaelement
+    this.metaElementsRepository.softDelete({ id: id });
+
+    return id;
+  }
+
+  async checkTagExists(tag: string, metaModel?: string) {
     const [set, count] = await this.metaModelsRepository.findAndCount({
-      where: { id: Not(Equal(metaModel)), tag: tag }
+      where: { ...(metaModel ? { id: Not(Equal(metaModel)) } : {}), tag: tag }
     });
     return count > 0;
   }
 
-  async checkMetaElementTagExists(metaModel: string, metaElement: string, tag: string) {
+  async checkMetaElementTagExists(tag: string, metaModel: string, metaElement?: string) {
     const [set, count] = await this.metaElementsRepository.findAndCount({
-      where: { metaModel: { id: metaModel }, id: Not(Equal(metaElement)), tag: tag }
+      where: { metaModel: { id: metaModel }, ...(metaElement ? { id: Not(Equal(metaElement)) } : {}), tag: tag }
     });
     return count > 0;
   }

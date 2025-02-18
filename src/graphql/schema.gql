@@ -276,6 +276,7 @@ type MetaModel {
 }
 
 input MetaModelCreateInput {
+  description: String
   logo: String
   name: String
   owner: UserRefInput!
@@ -321,6 +322,7 @@ input MetaModelRefInput {
 }
 
 input MetaModelUpdateInput {
+  description: String
   id: UUID!
   logo: String
   name: String
@@ -359,6 +361,7 @@ type Mutation {
   createMetaModel(logoFile: Upload, metaModelCreateInput: MetaModelCreateInput!): MetaModel
   createUser(userCreateInput: UserCreateInput!): User
   deleteEmail(code: String!, id: UUID!, password: String!): UUID!
+  deleteMetaElement(id: UUID!): UUID!
   deleteMetaModel(id: UUID!, password: String!): UUID!
   deleteUser(id: UUID!, password: String!): UUID!
   resetUserPassword(code: String!, newPassword: String!): User
@@ -431,8 +434,8 @@ input ProfileWhereInput {
 
 type Query {
   checkEmailAddressExists(address: String!): Boolean
-  checkMetaElementTagExists(metaElement: UUID!, metaModel: UUID!, tag: String!): Boolean
-  checkMetaModelTagExists(metaModel: UUID!, tag: String!): Boolean
+  checkMetaElementTagExists(metaElement: UUID, metaModel: UUID!, tag: String!): Boolean
+  checkMetaModelTagExists(metaModel: UUID, tag: String!): Boolean
   checkUserPassword(id: UUID!, password: String!): Boolean
   checkUserUsernameExists(username: String!): Boolean
   checkUserVerificationCode(code: String!, id: UUID!): Boolean
@@ -473,7 +476,7 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2025-02-12T14:14:48.341Z"
+  lastActivity: DateTime! = "2025-02-18T17:13:11.410Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput
@@ -572,7 +575,6 @@ input UserCreateInput {
   email: EmailAddress!
   password: String!
   profile: ProfileInput
-  role: String = "user"
   username: String!
 }
 
@@ -621,7 +623,6 @@ input UserRefInput {
 input UserUpdateInput {
   id: UUID!
   profile: ProfileInput
-  role: String = "user"
   username: String
 }
 

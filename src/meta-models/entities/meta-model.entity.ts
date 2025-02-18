@@ -58,7 +58,7 @@ export class MetaModel {
   @Field({ nullable: true })
   @FilterField()
   @Column({ nullable: true })
-  @MaxLength(500)
+  @MaxLength(200)
   description: string;
 
   @Field({ nullable: true })
@@ -98,7 +98,11 @@ export class MetaModel {
 }
 
 @InputType()
-export class MetaModelCreateInput extends PickType(MetaModel, ['name', 'tag', 'tags', 'logo'], InputType) {
+export class MetaModelCreateInput extends PickType(
+  MetaModel,
+  ['name', 'tag', 'tags', 'description', 'logo'],
+  InputType
+) {
   @Field(() => UserRefInput)
   owner: UserRefInput;
 }

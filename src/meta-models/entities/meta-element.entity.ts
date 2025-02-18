@@ -64,7 +64,7 @@ export class MetaElement {
   @FilterField()
   @Column({ nullable: true })
   @MinLength(1)
-  @MaxLength(30)
+  @MaxLength(15)
   name: string;
 
   @Field()
@@ -72,7 +72,7 @@ export class MetaElement {
   @Column()
   @Index()
   @MinLength(1)
-  @MaxLength(30)
+  @MaxLength(15)
   tag: string;
 
   @Field(() => GraphQLJSON, { nullable: true })
