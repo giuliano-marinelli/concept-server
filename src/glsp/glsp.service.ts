@@ -1,4 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 import { Language, LanguageElementType } from '@dynamic-glsp/protocol';
 import {
@@ -27,7 +28,8 @@ import { MetaModelsService } from 'src/meta-models/meta-models.service';
 export class GLSPService implements OnModuleInit {
   constructor(
     private readonly authService: AuthService,
-    private readonly metamodelsService: MetaModelsService
+    private readonly metamodelsService: MetaModelsService,
+    private readonly configService: ConfigService
   ) {}
 
   onModuleInit() {
@@ -38,8 +40,8 @@ export class GLSPService implements OnModuleInit {
     // define container options
     const options = createSocketCliParser<SocketLaunchOptions>({
       ...defaultLaunchOptions,
-      port: 3001,
-      host: '127.0.0.1'
+      port: this.configService.get<number>('GLSP_PORT'),
+      host: this.configService.get<string>('HOST')
     }).parse();
 
     // create a new inversify container

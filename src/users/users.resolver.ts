@@ -84,7 +84,7 @@ export class UsersResolver {
   async updatePrimaryEmail(
     @Args('id', { type: () => GraphQLUUID }) id: string,
     @Args('password') password: string,
-    @Args('code') code: string,
+    @Args('code', { nullable: true }) code: string,
     @Args('email', { type: () => EmailRefInput }) email: EmailRefInput,
     @SelectionSet() selection: SelectionInput,
     @AuthUser() authUser: User

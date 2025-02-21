@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Owner, PaginationInput, SelectionInput } from '@nestjs!/graphql-filter';
 
+import * as bcrypt from 'bcryptjs';
 import { Equal, FindOptionsOrder, FindOptionsRelations, FindOptionsWhere, Not, Repository } from 'typeorm';
 
 import { MetaElement, MetaElementCreateInput, MetaElementUpdateInput } from './entities/meta-element.entity';
@@ -15,7 +16,9 @@ export class MetaModelsService {
     @InjectRepository(MetaModel)
     private metaModelsRepository: Repository<MetaModel>,
     @InjectRepository(MetaElement)
-    private metaElementsRepository: Repository<MetaElement>
+    private metaElementsRepository: Repository<MetaElement>,
+    @InjectRepository(User)
+    private usersRepository: Repository<User>
   ) {}
 
   async create(metaModelCreateInput: MetaModelCreateInput, selection: SelectionInput, authUser: User) {
@@ -79,6 +82,28 @@ export class MetaModelsService {
     // only admin can delete other metamodels
     if (existent.owner.id != authUser.id && authUser.role != Role.ADMIN)
       throw new ForbiddenException('Cannot delete metamodels that are not of your own.');
+
+    // check the password: if user is not admin, check password of the owner of the metamodel
+    // if user is admin, check password of the authenticated user
+    if (authUser.role != Role.ADMIN) {
+      // check if owner exists
+      const owner = await this.usersRepository.findOne({
+        where: { id: existent.owner.id }
+      });
+
+      // check if password is correct
+      const passwordMatch = await bcrypt.compare(password, owner.password);
+      if (!passwordMatch) throw new ConflictException('Password is incorrect.');
+    } else {
+      // check if admin user exists
+      const admin = await this.usersRepository.findOne({
+        where: { id: authUser.id }
+      });
+
+      // check if password is correct
+      const passwordMatch = await bcrypt.compare(password, admin.password);
+      if (!passwordMatch) throw new ConflictException('Password is incorrect.');
+    }
 
     // delete metamodel
     this.metaModelsRepository.softDelete({ id: id });

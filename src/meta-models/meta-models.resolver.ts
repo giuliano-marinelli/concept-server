@@ -34,7 +34,6 @@ import { MetaModelsService } from './meta-models.service';
 export class MetaModelsResolver {
   constructor(private readonly metaModelsService: MetaModelsService) {}
 
-  @Public()
   @CheckPolicies((args) => ({
     action: Action.Create,
     subject: MetaModel.name,

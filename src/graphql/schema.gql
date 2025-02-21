@@ -371,7 +371,7 @@ type Mutation {
   updateUser(avatarFile: Upload, userUpdateInput: UserUpdateInput!): User
   updateUserPassword(id: UUID!, newPassword: String!, password: String!): User
   updateUserPasswordCode(usernameOrEmail: String!): User
-  updateUserPrimaryEmail(code: String!, email: EmailRefInput!, id: UUID!, password: String!): User
+  updateUserPrimaryEmail(code: String, email: EmailRefInput!, id: UUID!, password: String!): User
   updateUserVerificationCode(id: UUID!): User
   verifyEmail(code: String!, id: UUID!): Email
 }
@@ -476,7 +476,7 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2025-02-18T17:13:11.410Z"
+  lastActivity: DateTime! = "2025-02-20T18:22:18.640Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput

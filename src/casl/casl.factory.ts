@@ -73,6 +73,12 @@ export class CaslFactory {
       allow(Action.Update, Session.name);
       allow(Action.Read, Session.name);
       allow(Action.Filter, Session.name, ['id', 'user.id']);
+
+      // MetaModels
+      // limited to owner user on service
+      allow(Action.Create, MetaModel.name);
+      allow(Action.Update, MetaModel.name);
+      allow(Action.Delete, MetaModel.name);
     }
 
     // ADMIN
