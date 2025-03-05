@@ -125,7 +125,7 @@ export class MetaModelsService {
 
     // check if tagname already taken
     const existentTag = await this.metaElementsRepository.findOne({
-      where: { tag: metaElementCreateInput.tag }
+      where: { tag: metaElementCreateInput.tag, metaModel: { id: metaElementCreateInput.metaModel.id } }
     });
     if (existentTag) throw new ConflictException('Tag already taken.');
 
@@ -159,7 +159,13 @@ export class MetaModelsService {
     // check if tagname already taken
     if (metaElementUpdateInput.tag) {
       const existentTag = await this.metaElementsRepository.findOne({
-        where: [{ id: Not(Equal(metaElementUpdateInput.id)), tag: metaElementUpdateInput.tag }]
+        where: [
+          {
+            id: Not(Equal(metaElementUpdateInput.id)),
+            tag: metaElementUpdateInput.tag,
+            metaModel: { id: existent.metaModel.id }
+          }
+        ]
       });
       if (existentTag) throw new ConflictException('Tag already taken.');
     }
