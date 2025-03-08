@@ -121,7 +121,8 @@ export class GLSPService implements OnModuleInit {
             label: metaElement.name,
             gModel: metaElement.gModel,
             aModel: metaElement.aModel,
-            default: metaElement.defaultModel
+            default: metaElement.defaultModel,
+            constraints: metaElement.constraints
           };
           return acc;
         }, {})

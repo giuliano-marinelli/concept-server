@@ -9,7 +9,7 @@ import {
   registerEnumType
 } from '@nestjs/graphql';
 
-import { AModelRootSchema, LanguageElementType } from '@dynamic-glsp/protocol';
+import { AModelRootSchema, LanguageConstraint, LanguageElementType } from '@dynamic-glsp/protocol';
 import { GModelElementSchema } from '@eclipse-glsp/server';
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
@@ -87,6 +87,10 @@ export class MetaElement {
   @Column({ type: 'jsonb', nullable: true })
   defaultModel: any;
 
+  @Field(() => [GraphQLJSON], { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  constraints: LanguageConstraint[];
+
   @Field({ nullable: true })
   @FilterField()
   @Column({ nullable: true })
@@ -111,7 +115,7 @@ export class MetaElement {
 @InputType()
 export class MetaElementCreateInput extends PickType(
   MetaElement,
-  ['type', 'name', 'tag', 'gModel', 'aModel', 'defaultModel', 'preview'],
+  ['type', 'name', 'tag', 'gModel', 'aModel', 'defaultModel', 'constraints', 'preview'],
   InputType
 ) {
   @Field(() => MetaModelRefInput)
