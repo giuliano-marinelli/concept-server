@@ -46,15 +46,16 @@ export class MetaModelsService {
   }
 
   async update(metaModelUpdateInput: MetaModelUpdateInput, selection: SelectionInput, authUser: User) {
-    // only admin can update others metamodels
-    if (metaModelUpdateInput.id != authUser.id && authUser.role != Role.ADMIN)
-      throw new ForbiddenException('Cannot update metamodels that are not of your own.');
-
     // check if metamodel exists
     const existent = await this.metaModelsRepository.findOne({
-      where: { id: metaModelUpdateInput.id }
+      where: { id: metaModelUpdateInput.id },
+      relations: { owner: true }
     });
     if (!existent) throw new ConflictException('Metamodel not found.');
+
+    // only admin can update others metamodels
+    if (existent.owner.id != authUser.id && authUser.role != Role.ADMIN)
+      throw new ForbiddenException('Cannot update metamodels that are not of your own.');
 
     // check if tagname already taken
     if (metaModelUpdateInput.tag) {
