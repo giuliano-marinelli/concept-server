@@ -271,8 +271,10 @@ type MetaModel {
   id: UUID!
   logo: String
   metaElements: [MetaElement!]
+  models: [Model!]
   name: String
   owner: User
+  pinnedIn: [User!]
   tag: String!
   tags: [String!]
   updatedAt: DateTime
@@ -296,8 +298,10 @@ input MetaModelInput {
   id: UUID!
   logo: String
   metaElements: [MetaElementInput!]
+  models: [ModelInput!]
   name: String
   owner: UserInput
+  pinnedIn: [UserInput!]
   tag: String!
   tags: [String!]
   updatedAt: DateTime
@@ -313,8 +317,10 @@ input MetaModelOrderInput {
   id: OrderDirection
   logo: OrderDirection
   metaElements: MetaElementOrderInput
+  models: ModelOrderInput
   name: OrderDirection
   owner: UserOrderInput
+  pinnedIn: UserOrderInput
   tag: OrderDirection
   tags: OrderDirection
   updatedAt: OrderDirection
@@ -344,8 +350,10 @@ input MetaModelWhereInput {
   id: StringWhereInput
   logo: StringWhereInput
   metaElements: MetaElementWhereInput
+  models: ModelWhereInput
   name: StringWhereInput
   owner: UserWhereInput
+  pinnedIn: UserWhereInput
   tag: StringWhereInput
   tags: StringWhereInput
   updatedAt: DateTimeWhereInput
@@ -358,23 +366,127 @@ type MetaModels {
   set: [MetaModel!]
 }
 
+type Model {
+  collaborators: [User!]
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  id: UUID!
+  metaModel: MetaModel!
+  name: String
+  owner: User
+  pinnedIn: [User!]
+  preview: String
+  tag: String!
+  tags: [String!]
+  updatedAt: DateTime
+  version: SemVer!
+}
+
+input ModelCreateInput {
+  description: String
+  metaModel: MetaModelRefInput!
+  name: String
+  owner: UserRefInput!
+  preview: String
+  tag: String!
+  tags: [String!]
+}
+
+input ModelInput {
+  collaborators: [UserInput!]
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  id: UUID!
+  metaModel: MetaModelInput!
+  name: String
+  owner: UserInput
+  pinnedIn: [UserInput!]
+  preview: String
+  tag: String!
+  tags: [String!]
+  updatedAt: DateTime
+  version: SemVer!
+}
+
+""""""
+input ModelOrderInput {
+  collaborators: UserOrderInput
+  createdAt: OrderDirection
+  deletedAt: OrderDirection
+  description: OrderDirection
+  id: OrderDirection
+  metaModel: MetaModelOrderInput
+  name: OrderDirection
+  owner: UserOrderInput
+  pinnedIn: UserOrderInput
+  preview: OrderDirection
+  tag: OrderDirection
+  tags: OrderDirection
+  updatedAt: OrderDirection
+  version: OrderDirection
+}
+
+input ModelRefInput {
+  id: UUID!
+}
+
+input ModelUpdateInput {
+  description: String
+  id: UUID!
+  name: String
+  owner: UserRefInput
+  preview: String
+  tag: String
+  tags: [String!]
+}
+
+""""""
+input ModelWhereInput {
+  collaborators: UserWhereInput
+  createdAt: DateTimeWhereInput
+  deletedAt: DateTimeWhereInput
+  description: StringWhereInput
+  id: StringWhereInput
+  metaModel: MetaModelWhereInput
+  name: StringWhereInput
+  owner: UserWhereInput
+  pinnedIn: UserWhereInput
+  preview: StringWhereInput
+  tag: StringWhereInput
+  tags: StringWhereInput
+  updatedAt: DateTimeWhereInput
+  version: StringWhereInput
+}
+
+""""""
+type Models {
+  count: Int!
+  set: [Model!]
+}
+
 type Mutation {
   closeSession(id: UUID!): Session
   createEmail(emailCreateInput: EmailCreateInput!): Email
   createMetaElement(metaElementCreateInput: MetaElementCreateInput!): MetaElement
   createMetaModel(logoFile: Upload, metaModelCreateInput: MetaModelCreateInput!): MetaModel
+  createModel(modelCreateInput: ModelCreateInput!): Model
   createUser(userCreateInput: UserCreateInput!): User
   deleteEmail(code: String!, id: UUID!, password: String!): UUID!
   deleteMetaElement(id: UUID!): UUID!
   deleteMetaModel(id: UUID!, password: String!): UUID!
+  deleteModel(id: UUID!, password: String!): UUID!
   deleteUser(id: UUID!, password: String!): UUID!
   resetUserPassword(code: String!, newPassword: String!): User
   updateEmailVerificationCode(id: UUID!): Email
   updateMetaElement(metaElementUpdateInput: MetaElementUpdateInput!): MetaElement
   updateMetaModel(logoFile: Upload, metaModelUpdateInput: MetaModelUpdateInput!): MetaModel
+  updateModel(modelUpdateInput: ModelUpdateInput!): Model
   updateUser(avatarFile: Upload, userUpdateInput: UserUpdateInput!): User
   updateUserPassword(id: UUID!, newPassword: String!, password: String!): User
   updateUserPasswordCode(usernameOrEmail: String!): User
+  updateUserPinnedResources(id: UUID!, pinnedMetaModels: [MetaModelRefInput!], pinnedModels: [ModelRefInput!]): User
   updateUserPrimaryEmail(code: String, email: EmailRefInput!, id: UUID!, password: String!): User
   updateUserVerificationCode(id: UUID!): User
   verifyEmail(code: String!, id: UUID!): Email
@@ -440,6 +552,7 @@ type Query {
   checkEmailAddressExists(address: String!): Boolean
   checkMetaElementTagExists(metaElement: UUID, metaModel: UUID!, tag: String!): Boolean
   checkMetaModelTagExists(metaModel: UUID, tag: String!): Boolean
+  checkModelTagExists(model: UUID, tag: String!): Boolean
   checkUserPassword(id: UUID!, password: String!): Boolean
   checkUserUsernameExists(username: String!): Boolean
   checkUserVerificationCode(code: String!, id: UUID!): Boolean
@@ -453,6 +566,8 @@ type Query {
   logout: Boolean!
   metaModel(id: UUID!): MetaModel
   metaModels(order: [MetaModelOrderInput!], pagination: PaginationInput, where: [MetaModelWhereInput!]): MetaModels!
+  model(id: UUID!): Model
+  models(order: [ModelOrderInput!], pagination: PaginationInput, where: [ModelWhereInput!]): Models!
   session(id: UUID!): Session
   sessions(order: [SessionOrderInput!], pagination: PaginationInput, where: [SessionWhereInput!]): Sessions!
   user(id: UUID!): User
@@ -480,7 +595,7 @@ input SessionInput {
   createdAt: DateTime!
   device: DeviceInput
   id: UUID!
-  lastActivity: DateTime! = "2025-04-15T13:38:45.718Z"
+  lastActivity: DateTime! = "2025-06-22T20:41:56.669Z"
   token: String!
   updatedAt: DateTime!
   user: UserInput
@@ -558,14 +673,18 @@ scalar Upload
 
 type User {
   collabMetaModels: [MetaModel!]
+  collabModels: [Model!]
   createdAt: DateTime
   deletedAt: DateTime
   emails: [Email!]
   id: UUID!
   lastVerificationTry: DateTime
   ownMetaModels: [MetaModel!]
+  ownModels: [Model!]
   password: String!
   passwordCode: String
+  pinnedMetaModels: [MetaModel!]
+  pinnedModels: [Model!]
   primaryEmail: Email
   profile: Profile
   role: String
@@ -584,14 +703,18 @@ input UserCreateInput {
 
 input UserInput {
   collabMetaModels: [MetaModelInput!]
+  collabModels: [ModelInput!]
   createdAt: DateTime
   deletedAt: DateTime
   emails: [EmailInput!]
   id: UUID!
   lastVerificationTry: DateTime
   ownMetaModels: [MetaModelInput!]
+  ownModels: [ModelInput!]
   password: String!
   passwordCode: String
+  pinnedMetaModels: [MetaModelInput!]
+  pinnedModels: [ModelInput!]
   primaryEmail: EmailInput
   profile: ProfileInput
   role: String = "user"
@@ -604,13 +727,17 @@ input UserInput {
 """"""
 input UserOrderInput {
   collabMetaModels: MetaModelOrderInput
+  collabModels: ModelOrderInput
   createdAt: OrderDirection
   deletedAt: OrderDirection
   emails: EmailOrderInput
   id: OrderDirection
   lastVerificationTry: OrderDirection
   ownMetaModels: MetaModelOrderInput
+  ownModels: ModelOrderInput
   passwordCode: OrderDirection
+  pinnedMetaModels: MetaModelOrderInput
+  pinnedModels: ModelOrderInput
   primaryEmail: EmailOrderInput
   profile: ProfileOrderInput
   role: OrderDirection
@@ -633,13 +760,17 @@ input UserUpdateInput {
 """"""
 input UserWhereInput {
   collabMetaModels: MetaModelWhereInput
+  collabModels: ModelWhereInput
   createdAt: DateTimeWhereInput
   deletedAt: DateTimeWhereInput
   emails: EmailWhereInput
   id: StringWhereInput
   lastVerificationTry: DateTimeWhereInput
   ownMetaModels: MetaModelWhereInput
+  ownModels: ModelWhereInput
   passwordCode: StringWhereInput
+  pinnedMetaModels: MetaModelWhereInput
+  pinnedModels: ModelWhereInput
   primaryEmail: EmailWhereInput
   profile: ProfileWhereInput
   role: StringWhereInput

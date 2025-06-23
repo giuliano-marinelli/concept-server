@@ -1,4 +1,4 @@
-import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType } from '@nestjs/graphql';
+import { Field, InputType, IntersectionType, ObjectType, OmitType, PartialType, PickType } from '@nestjs/graphql';
 
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
@@ -14,19 +14,23 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 
-import { MetaElement, MetaElementOrderInput, MetaElementWhereInput } from './meta-element.entity';
-import { Model, ModelOrderInput, ModelWhereInput } from 'src/models/entities/model.entity';
+import {
+  MetaModel,
+  MetaModelOrderInput,
+  MetaModelRefInput,
+  MetaModelWhereInput
+} from 'src/meta-models/entities/meta-model.entity';
+import { Profile, ProfileOrderInput, ProfileWhereInput } from 'src/users/entities/profile.entity';
 import { User, UserOrderInput, UserRefInput, UserWhereInput } from 'src/users/entities/user.entity';
 
 @ObjectType()
-@InputType('MetaModelInput', { isAbstract: true })
+@InputType('ModelInput', { isAbstract: true })
 @Entity()
-export class MetaModel {
+export class Model {
   @Field(() => GraphQLUUID)
   @FilterField()
   @PrimaryGeneratedColumn('uuid')
@@ -66,7 +70,7 @@ export class MetaModel {
   @Field({ nullable: true })
   @FilterField()
   @Column({ nullable: true })
-  logo: string;
+  preview: string;
 
   @Field({ nullable: true })
   @FilterField()
@@ -85,55 +89,49 @@ export class MetaModel {
 
   @Field(() => User, { nullable: true, middleware: [CheckPolicy] })
   @FilterField(() => UserWhereInput, () => UserOrderInput)
-  @ManyToOne(() => User, (user) => user.ownMetaModels)
+  @ManyToOne(() => User, (user) => user.ownModels)
   owner: User;
 
   @Field(() => [User], { nullable: true, middleware: [CheckPolicy] })
   @FilterField(() => UserWhereInput, () => UserOrderInput)
-  @ManyToMany(() => User, (user) => user.collabMetaModels)
-  @JoinTable({ name: 'meta_model_collaborators' })
+  @ManyToMany(() => User, (user) => user.collabModels)
+  @JoinTable({ name: 'model_collaborators' })
   collaborators: User[];
 
-  @Field(() => [MetaElement], { nullable: true })
-  @FilterField(() => MetaElementWhereInput, () => MetaElementOrderInput)
-  @OneToMany(() => MetaElement, (metaElement) => metaElement.metaModel, { cascade: true })
-  metaElements: MetaElement[];
-
-  @Field(() => [Model], { nullable: true })
-  @FilterField(() => ModelWhereInput, () => ModelOrderInput)
-  @OneToMany(() => Model, (model) => model.metaModel, { cascade: false })
-  models: Model[];
+  @Field(() => MetaModel)
+  @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
+  @ManyToOne(() => MetaModel, (metaModel) => metaModel.models)
+  metaModel: MetaModel;
 
   @Field(() => [User], { nullable: true, middleware: [CheckPolicy] })
   @FilterField(() => UserWhereInput, () => UserOrderInput)
-  @ManyToMany(() => User, (user) => user.pinnedMetaModels, { nullable: true })
+  @ManyToMany(() => User, (user) => user.pinnedModels, { nullable: true })
   pinnedIn: User[];
 }
 
 @InputType()
-export class MetaModelCreateInput extends PickType(
-  MetaModel,
-  ['name', 'tag', 'tags', 'description', 'logo'],
-  InputType
-) {
+export class ModelCreateInput extends PickType(Model, ['name', 'tag', 'tags', 'description', 'preview'], InputType) {
   @Field(() => UserRefInput)
   owner: UserRefInput;
+
+  @Field(() => MetaModelRefInput)
+  metaModel: MetaModelRefInput;
 }
 
 @InputType()
-export class MetaModelUpdateInput extends IntersectionType(
-  PickType(MetaModel, ['id'], InputType),
-  PartialType(MetaModelCreateInput)
+export class ModelUpdateInput extends IntersectionType(
+  PickType(Model, ['id'], InputType),
+  PartialType(OmitType(ModelCreateInput, ['metaModel']))
 ) {}
 
 @InputType()
-export class MetaModelRefInput extends PickType(MetaModel, ['id'], InputType) {}
+export class ModelRefInput extends PickType(Model, ['id'], InputType) {}
 
-@FilterWhereType(MetaModel)
-export class MetaModelWhereInput {}
+@FilterWhereType(Model)
+export class ModelWhereInput {}
 
-@FilterOrderType(MetaModel)
-export class MetaModelOrderInput {}
+@FilterOrderType(Model)
+export class ModelOrderInput {}
 
-@Many(MetaModel, { setName: 'set' })
-export class MetaModels {}
+@Many(Model, { setName: 'set' })
+export class Models {}

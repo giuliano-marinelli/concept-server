@@ -23,6 +23,7 @@ import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
 import { EmailsModule } from './emails/emails.module';
 import { MetaModelsModule } from './meta-models/meta-models.module';
+import { ModelsModule } from './models/models.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { SharedModule } from './shared/shared.module';
 import { UsersModule } from './users/users.module';
@@ -94,6 +95,7 @@ import { UsersModule } from './users/users.module';
     SessionsModule,
     EmailsModule,
     MetaModelsModule,
+    ModelsModule,
     SharedModule
   ],
   providers: [

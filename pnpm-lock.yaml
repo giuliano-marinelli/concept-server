@@ -239,6 +239,9 @@ importers:
       '@eclipse-glsp/server':
         specifier: '>=2.3.0'
         version: 2.3.0(inversify@6.2.2(reflect-metadata@0.2.2))
+      expressionparser:
+        specifier: ^1.1.9
+        version: 1.1.9
       inversify:
         specifier: '>=6.2.2'
         version: 6.2.2(reflect-metadata@0.2.2)
@@ -2230,6 +2233,9 @@ packages:
   express@5.0.1:
     resolution: {integrity: sha512-ORF7g6qGnD+YtUG9yx4DFoqCShNMmUKiXuT5oWMHiOvt/4WFbHC6yCwQMTSBMno7AqntNCAzzcnnjowRkTL9eQ==}
     engines: {node: '>= 18'}
+
+  expressionparser@1.1.9:
+    resolution: {integrity: sha512-istVFhzV7sde+avfrCgOXQWyVwqjQUlnLXllW3NHqYdsCZ0HjsaYmgDzH8dvnbeeM5zBpAB2qX4jZCF1htDU3Q==}
 
   external-editor@3.1.0:
     resolution: {integrity: sha512-hMQ4CX1p1izmuLYyZqLMO/qGNw10wSv9QDCPfzXfyFrOaCSSoRfqE1Kf1s5an66J5JZC62NewG+mK49jOCtQew==}
@@ -6581,6 +6587,8 @@ snapshots:
       vary: 1.1.2
     transitivePeerDependencies:
       - supports-color
+
+  expressionparser@1.1.9: {}
 
   external-editor@3.1.0:
     dependencies:

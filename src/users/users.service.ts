@@ -9,6 +9,8 @@ import { EntityManager, Equal, FindOptionsOrder, FindOptionsWhere, Not, Reposito
 
 import { Role, User, UserCreateInput, UserUpdateInput } from './entities/user.entity';
 import { Email, EmailRefInput } from 'src/emails/entities/email.entity';
+import { MetaModel, MetaModelRefInput } from 'src/meta-models/entities/meta-model.entity';
+import { Model, ModelRefInput } from 'src/models/entities/model.entity';
 import { Session } from 'src/sessions/entities/session.entity';
 
 @Injectable()
@@ -218,6 +220,35 @@ export class UsersService {
       { id: id },
       { primaryEmail: { id: email.id }, verificationCode: null, lastVerificationTry: null }
     );
+    return await this.usersRepository.findOne({
+      relations: selection?.getRelations(),
+      where: { id: id }
+    });
+  }
+
+  async updatePinnedResources(
+    id: string,
+    pinnedMetaModels: MetaModelRefInput[],
+    pinnedModels: ModelRefInput[],
+    selection: SelectionInput,
+    authUser: User
+  ) {
+    // only admin can update other users
+    if (id != authUser.id && authUser.role != Role.ADMIN)
+      throw new ForbiddenException('Cannot update pinned resources of users other than yourself.');
+
+    // check if user exists
+    const existent = await this.usersRepository.findOne({
+      where: { id: id }
+    });
+    if (!existent) throw new ConflictException('User not found.');
+
+    // set pinned resources to existent user
+    existent.pinnedMetaModels = pinnedMetaModels as MetaModel[];
+    existent.pinnedModels = pinnedModels as Model[];
+
+    await this.usersRepository.save(existent);
+
     return await this.usersRepository.findOne({
       relations: selection?.getRelations(),
       where: { id: id }

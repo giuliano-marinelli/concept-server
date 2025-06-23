@@ -4,6 +4,7 @@ import { AbilityBuilder, createAliasResolver, createMongoAbility } from '@casl/a
 
 import { Email } from 'src/emails/entities/email.entity';
 import { MetaModel } from 'src/meta-models/entities/meta-model.entity';
+import { Model } from 'src/models/entities/model.entity';
 import { Session } from 'src/sessions/entities/session.entity';
 import { Role, User } from 'src/users/entities/user.entity';
 
@@ -55,6 +56,19 @@ export class CaslFactory {
       'metaElements.tag'
     ]);
 
+    // Models
+    allow(Action.Read, Model.name);
+    allow(Action.Filter, Model.name, [
+      'name',
+      'tag',
+      'tags',
+      'version',
+      'description',
+      'preview',
+      'owner.username',
+      'collaborators.username'
+    ]);
+
     // USER
     if (user?.role == Role.USER) {
       // Users
@@ -78,7 +92,13 @@ export class CaslFactory {
       // limited to owner user on service
       allow(Action.Create, MetaModel.name);
       allow(Action.Update, MetaModel.name);
-      allow(Action.Delete, MetaModel.name);
+      allow(Action.Delete, MetaModel.name); // it also has to be limited to non instanced ones
+
+      // Models
+      // limited to owner user on service
+      allow(Action.Create, Model.name);
+      allow(Action.Update, Model.name);
+      allow(Action.Delete, Model.name);
     }
 
     // ADMIN

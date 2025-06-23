@@ -22,6 +22,8 @@ import { FindOptionsOrder, FindOptionsWhere } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { User, UserCreateInput, UserOrderInput, UserUpdateInput, UserWhereInput, Users } from './entities/user.entity';
 import { EmailRefInput } from 'src/emails/entities/email.entity';
+import { MetaModelRefInput } from 'src/meta-models/entities/meta-model.entity';
+import { ModelRefInput } from 'src/models/entities/model.entity';
 
 import { UsersService } from './users.service';
 
@@ -90,6 +92,22 @@ export class UsersResolver {
     @AuthUser() authUser: User
   ) {
     return await this.usersService.updatePrimaryEmail(id, password, code, email, selection, authUser);
+  }
+
+  @CheckPolicies(() => ({
+    action: Action.Update,
+    subject: User.name
+  }))
+  @Mutation(() => User, { name: 'updateUserPinnedResources', nullable: true })
+  async updatePinnedResources(
+    @Args('id', { type: () => GraphQLUUID }) id: string,
+    @Args('pinnedMetaModels', { type: () => [MetaModelRefInput], nullable: true })
+    pinnedMetaModels: MetaModelRefInput[],
+    @Args('pinnedModels', { type: () => [ModelRefInput], nullable: true }) pinnedModels: ModelRefInput[],
+    @SelectionSet() selection: SelectionInput,
+    @AuthUser() authUser: User
+  ) {
+    return await this.usersService.updatePinnedResources(id, pinnedMetaModels, pinnedModels, selection, authUser);
   }
 
   @CheckPolicies(() => ({

@@ -22,6 +22,7 @@ import {
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   OneToMany,
   OneToOne,
@@ -32,6 +33,7 @@ import {
 import { Profile, ProfileOrderInput, ProfileWhereInput } from './profile.entity';
 import { Email, EmailOrderInput, EmailWhereInput } from 'src/emails/entities/email.entity';
 import { MetaModel, MetaModelOrderInput, MetaModelWhereInput } from 'src/meta-models/entities/meta-model.entity';
+import { Model, ModelOrderInput, ModelWhereInput } from 'src/models/entities/model.entity';
 import { Session, SessionOrderInput, SessionWhereInput } from 'src/sessions/entities/session.entity';
 
 export enum Role {
@@ -144,6 +146,32 @@ export class User {
   @ManyToMany(() => MetaModel, (metaModel) => metaModel.collaborators)
   @Extensions({ owner: 'id' })
   collabMetaModels: MetaModel[];
+
+  @Field(() => [MetaModel], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
+  @ManyToMany(() => MetaModel, (metaModel) => metaModel.pinnedIn, { nullable: true })
+  @JoinTable({ name: 'pinned_meta_models' })
+  @Extensions({ owner: 'id' })
+  pinnedMetaModels: MetaModel[];
+
+  @Field(() => [Model], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => ModelWhereInput, () => ModelOrderInput)
+  @OneToMany(() => Model, (model) => model.owner)
+  @Extensions({ owner: 'id' })
+  ownModels?: Model[];
+
+  @Field(() => [Model], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => ModelWhereInput, () => ModelOrderInput)
+  @ManyToMany(() => Model, (model) => model.collaborators)
+  @Extensions({ owner: 'id' })
+  collabModels?: Model[];
+
+  @Field(() => [Model], { nullable: true, middleware: [CheckPolicy] })
+  @FilterField(() => ModelWhereInput, () => ModelOrderInput)
+  @ManyToMany(() => Model, (model) => model.pinnedIn, { nullable: true })
+  @JoinTable({ name: 'pinned_models' })
+  @Extensions({ owner: 'id' })
+  pinnedModels: Model[];
 }
 
 @InputType()
