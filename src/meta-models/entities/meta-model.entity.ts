@@ -2,7 +2,7 @@ import { Field, InputType, IntersectionType, ObjectType, PartialType, PickType }
 
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
-import { MaxLength, MinLength } from 'class-validator';
+import { ArrayMaxSize, MaxLength, MinLength } from 'class-validator';
 import { GraphQLSemVer, GraphQLUUID } from 'graphql-scalars';
 import { CheckPolicy } from 'src/casl/casl.middleware';
 import {
@@ -50,6 +50,9 @@ export class MetaModel {
   @Field(() => [String], { nullable: true })
   @FilterField()
   @Column('text', { array: true, nullable: true })
+  @ArrayMaxSize(5)
+  @MinLength(1, { each: true })
+  @MaxLength(15, { each: true })
   tags: string[];
 
   @Field(() => GraphQLSemVer)
