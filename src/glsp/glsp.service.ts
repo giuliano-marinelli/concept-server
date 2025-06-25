@@ -41,7 +41,7 @@ export class GLSPService implements OnModuleInit {
     const options = createSocketCliParser<SocketLaunchOptions>({
       ...defaultLaunchOptions,
       port: this.configService.get<number>('GLSP_PORT'),
-      host: this.configService.get<string>('HOST')
+      host: this.configService.get<string>('GLSP_HOST')
     }).parse();
 
     // create a new inversify container
