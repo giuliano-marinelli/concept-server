@@ -23,9 +23,9 @@ concept
 
 ### Development
 
-Run `pnpm start`: execute [nest start](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:3000](http://localhost:3000)
+Run `pnpm start`: execute [nest start](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:4000](http://localhost:4000)
 
-Run `pnpm watch`: execute [nest start --watch](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:3000](http://localhost:3000) and any change automatically re-compiles and restart server.
+Run `pnpm watch`: execute [nest start --watch](https://docs.nestjs.com/cli/usages#nest-start) that compiles and runs the server and put it listening at [localhost:4000](http://localhost:4000) and any change automatically re-compiles and restart server.
 
 ### Development of [@dynamic-glsp](https://www.npmjs.com/settings/dynamic-glsp/packages) all-in-one
 
@@ -51,4 +51,4 @@ Run `pnpm watch:all`: execute `concurrently` watch mode over [concept-server](ht
 
 Run `pnpm build`: execute [nest build](https://docs.nestjs.com/cli/usages#nest-build) that generates **dist** folder at the project root folder for been used with node command.
 
-Run `pnpm prod`: execute `node` command over **dist/main** folder to start server listening at [localhost:3000](http://localhost:3000).
+Run `pnpm prod`: execute `node` command over **dist/main** folder to start server listening at [localhost:4000](http://localhost:4000).
