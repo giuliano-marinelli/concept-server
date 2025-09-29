@@ -34,6 +34,7 @@ export class CaslFactory {
     // Users
     allow(Action.Create, User.name, ['username', 'email', 'password']);
     allow(Action.Read, User.name);
+    allow(Action.Read, User.name);
     forbid(Action.Read, User.name, ['password', 'verificationCode', 'lastVerificationTry']);
     allow(Action.Filter, User.name, ['username', 'emails.address']);
 

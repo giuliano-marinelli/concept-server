@@ -12,7 +12,6 @@ import {
 
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
-import { Transform } from 'class-transformer';
 import { IsEmail, MaxLength, MinLength } from 'class-validator';
 import { GraphQLEmailAddress, GraphQLUUID } from 'graphql-scalars';
 import { CheckPolicy } from 'src/casl/casl.middleware';
@@ -135,38 +134,38 @@ export class User {
   @Extensions({ owner: 'id' })
   sessions: Session[];
 
-  @Field(() => [MetaModel], { nullable: true, middleware: [CheckPolicy] })
+  @Field(() => [MetaModel], { nullable: true })
   @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
   @OneToMany(() => MetaModel, (metaModel) => metaModel.owner)
   @Extensions({ owner: 'id' })
   ownMetaModels: MetaModel[];
 
-  @Field(() => [MetaModel], { nullable: true, middleware: [CheckPolicy] })
+  @Field(() => [MetaModel], { nullable: true })
   @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
   @ManyToMany(() => MetaModel, (metaModel) => metaModel.collaborators)
   @Extensions({ owner: 'id' })
   collabMetaModels: MetaModel[];
 
-  @Field(() => [MetaModel], { nullable: true, middleware: [CheckPolicy] })
+  @Field(() => [MetaModel], { nullable: true })
   @FilterField(() => MetaModelWhereInput, () => MetaModelOrderInput)
   @ManyToMany(() => MetaModel, (metaModel) => metaModel.pinnedIn, { nullable: true })
   @JoinTable({ name: 'pinned_meta_models' })
   @Extensions({ owner: 'id' })
   pinnedMetaModels: MetaModel[];
 
-  @Field(() => [Model], { nullable: true, middleware: [CheckPolicy] })
+  @Field(() => [Model], { nullable: true })
   @FilterField(() => ModelWhereInput, () => ModelOrderInput)
   @OneToMany(() => Model, (model) => model.owner)
   @Extensions({ owner: 'id' })
   ownModels?: Model[];
 
-  @Field(() => [Model], { nullable: true, middleware: [CheckPolicy] })
+  @Field(() => [Model], { nullable: true })
   @FilterField(() => ModelWhereInput, () => ModelOrderInput)
   @ManyToMany(() => Model, (model) => model.collaborators)
   @Extensions({ owner: 'id' })
   collabModels?: Model[];
 
-  @Field(() => [Model], { nullable: true, middleware: [CheckPolicy] })
+  @Field(() => [Model], { nullable: true })
   @FilterField(() => ModelWhereInput, () => ModelOrderInput)
   @ManyToMany(() => Model, (model) => model.pinnedIn, { nullable: true })
   @JoinTable({ name: 'pinned_models' })
