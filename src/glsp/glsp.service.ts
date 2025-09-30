@@ -23,12 +23,14 @@ import { MetaModel } from 'src/meta-models/entities/meta-model.entity';
 
 import { AuthService } from 'src/auth/auth.service';
 import { MetaModelsService } from 'src/meta-models/meta-models.service';
+import { ModelsService } from 'src/models/models.service';
 
 @Injectable()
 export class GLSPService implements OnModuleInit {
   constructor(
     private readonly authService: AuthService,
     private readonly metamodelsService: MetaModelsService,
+    private readonly modelsService: ModelsService,
     private readonly configService: ConfigService
   ) {}
 
@@ -73,12 +75,51 @@ export class GLSPService implements OnModuleInit {
         return this.parseMetaModel(metaModel);
       },
       modelProvider: async (modelID: string, connectionAuth: MessageConnectionAuth) => {
-        return { id: uuid.v4(), nodes: [], edges: [] };
+        const authUser = await this.authService.checkUser(
+          connectionAuth.auth,
+          connectionAuth.userAgent,
+          connectionAuth.ip,
+          (message) => new GLSPServerError(message)
+        );
+
+        // if no modelID is provided, return an empty model (for new models)
+        if (!modelID) return this.emptyModel();
+
+        const model = await this.modelsService?.findOne(modelID, {}, authUser);
+
+        if (!model) throw new GLSPServerError(`Model with id ${modelID} not found`);
+
+        return this.parseModel(model);
       },
       modelSaver: async (modelID: string, model: any, preview: any, connectionAuth: MessageConnectionAuth) => {
         console.log('model saved:', preview);
 
-        return;
+        const authUser = await this.authService.checkUser(
+          connectionAuth.auth,
+          connectionAuth.userAgent,
+          connectionAuth.ip,
+          (message) => new GLSPServerError(message)
+        );
+
+        if (!modelID) throw new GLSPServerError('No model ID provided to save the model');
+
+        const existingModel = await this.modelsService?.findOne(modelID, {}, authUser);
+
+        if (!existingModel) throw new GLSPServerError(`Model with id ${modelID} not found`);
+
+        try {
+          await this.modelsService?.update(
+            {
+              id: existingModel.id,
+              preview: preview,
+              source: model
+            } as any,
+            null,
+            authUser
+          );
+        } catch (error) {
+          throw new GLSPServerError(`Error saving model with id ${modelID}: ${error.message}`);
+        }
       }
     };
 
@@ -127,5 +168,21 @@ export class GLSPService implements OnModuleInit {
           return acc;
         }, {})
     } as Language;
+  }
+
+  parseModel(model: any) {
+    return {
+      id: model.id,
+      nodes: model.source?.nodes || [],
+      edges: model.source?.edges || []
+    };
+  }
+
+  emptyModel() {
+    return {
+      id: uuid.v4(),
+      nodes: [],
+      edges: []
+    };
   }
 }

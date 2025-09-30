@@ -1,9 +1,10 @@
 import { Field, InputType, IntersectionType, ObjectType, OmitType, PartialType, PickType } from '@nestjs/graphql';
 
+import { DynamicModel } from '@dynamic-glsp/server';
 import { FilterField, FilterOrderType, FilterWhereType, Many } from '@nestjs!/graphql-filter';
 
 import { MaxLength, MinLength } from 'class-validator';
-import { GraphQLSemVer, GraphQLUUID } from 'graphql-scalars';
+import { GraphQLJSON, GraphQLSemVer, GraphQLUUID } from 'graphql-scalars';
 import { CheckPolicy } from 'src/casl/casl.middleware';
 import {
   Column,
@@ -42,6 +43,10 @@ export class Model {
   @MinLength(1)
   @MaxLength(30)
   name: string;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
+  source: DynamicModel;
 
   @Field()
   @FilterField()
@@ -110,7 +115,11 @@ export class Model {
 }
 
 @InputType()
-export class ModelCreateInput extends PickType(Model, ['name', 'tag', 'tags', 'description', 'preview'], InputType) {
+export class ModelCreateInput extends PickType(
+  Model,
+  ['name', 'tag', 'tags', 'description', 'preview', 'source'],
+  InputType
+) {
   @Field(() => UserRefInput)
   owner: UserRefInput;
 
