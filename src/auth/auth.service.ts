@@ -74,12 +74,15 @@ export class AuthService {
 
     // here we check detected device is equal to the device in jwt token
     // if it's not equal we block the session
-    if (JSON.stringify(detectedDevice) != JSON.stringify(decryptedDevice)) {
-      await this.sessionsRepository.update({ token: token }, { blockedAt: new Date() });
+    // in development mode we skip this check for easier testing
+    if (this.configService.get<string>('PRODUCTION') !== 'false') {
+      if (JSON.stringify(detectedDevice) != JSON.stringify(decryptedDevice)) {
+        await this.sessionsRepository.update({ token: token }, { blockedAt: new Date() });
 
-      // HERE WE HAVE TO NOTIFY WITH EMAIL OR PUSH NOTIFICATION
+        // HERE WE HAVE TO NOTIFY WITH EMAIL OR PUSH NOTIFICATION
 
-      throw errorHandler(this.errorMessage + 'devices not match');
+        throw errorHandler(this.errorMessage + 'devices not match');
+      }
     }
 
     // update session last activity

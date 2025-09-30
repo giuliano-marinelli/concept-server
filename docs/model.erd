@@ -72,6 +72,8 @@ entity MetaModel {
     version key
     name
     description
+    tag
+    tags
     logo
 }
 relationship hasElements {
@@ -79,8 +81,14 @@ relationship hasElements {
 }
 entity MetaElement {
     id key
+    type
     name
-    description
+    tag
+    gModel
+    aModel
+    defaultModel
+    constraints
+    preview
 }
 relationship hasConnections {
    MetaModel[1] -> MetaConnection[N]
